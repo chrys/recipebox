@@ -109,7 +109,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const stars = container.querySelectorAll('.star');
 
         stars.forEach(star => {
-            star.addEventListener('click', () => {
+            star.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 const rating = star.getAttribute('data-value');
                 fetch(`/recipes/${recipeId}/rate/`, {
                     method: 'POST',
