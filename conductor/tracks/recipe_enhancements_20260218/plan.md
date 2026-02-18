@@ -46,10 +46,10 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 3: Smart Calendar Scheduling' (Protocol in workflow.md) 33b1fb2
 
 ## Phase 4: Shopping List Module
-- [ ] Task: Implement Shopping List Logic
+- [x] Task: Implement Shopping List Logic 3eb1245
     - [ ] Create `Tests/unit/recipes/test_shopping_list.py` and write tests for ingredient aggregation and aisle grouping.
     - [ ] Implement the shopping list aggregation logic.
-- [ ] Task: Shopping List UI
+- [x] Task: Shopping List UI 3eb1245
     - [ ] Create the shopping list page and template grouped by aisle.
 - [ ] Task: Conductor - User Manual Verification 'Phase 4: Shopping List Module' (Protocol in workflow.md)
 
