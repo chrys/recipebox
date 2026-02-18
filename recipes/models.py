@@ -47,6 +47,10 @@ class Recipe(models.Model):
         default=False,
         help_text='Make this recipe visible to all users.',
     )
+    rating = models.PositiveSmallIntegerField(
+        null=True, blank=True,
+        help_text='Recipe rating (1-5 stars).',
+    )
     image = models.ImageField(
         upload_to='recipes/',
         null=True, blank=True,
@@ -86,6 +90,11 @@ class RecipeIngredient(models.Model):
         max_length=50,
         blank=True, default='',
         help_text='e.g. "2 cups", "a pinch"',
+    )
+    aisle = models.CharField(
+        max_length=100,
+        blank=True, default='',
+        help_text='Supermarket aisle (e.g. Produce, Dairy).',
     )
     order = models.PositiveIntegerField(default=0)
 
