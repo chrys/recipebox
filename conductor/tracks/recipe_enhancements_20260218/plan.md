@@ -1,7 +1,7 @@
 # Implementation Plan: Recipe Enhancements, Admin Settings & Smart Shopping
 
 ## Phase 1: Recipe Model & UI Enhancements
-- [ ] Task: Update Recipe & Ingredient Models
+- [x] Task: Update Recipe & Ingredient Models ac41696
     - [ ] Create `Tests/unit/recipes/test_models.py` and write failing tests for new fields.
     - [ ] Add `rating` (Integer 1-5) to `Recipe` in `recipes/models.py`.
     - [ ] Add `aisle` (CharField) to `RecipeIngredient` in `recipes/models.py`.
