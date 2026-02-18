@@ -45,13 +45,13 @@
     - [ ] Update calendar context menu and implement JS for AJAX replacement.
 - [x] Task: Conductor - User Manual Verification 'Phase 3: Smart Calendar Scheduling' (Protocol in workflow.md) 33b1fb2
 
-## Phase 4: Shopping List Module
+## Phase 4: Shopping List Module [checkpoint: b15d10f]
 - [x] Task: Implement Shopping List Logic 3eb1245
     - [ ] Create `Tests/unit/recipes/test_shopping_list.py` and write tests for ingredient aggregation and aisle grouping.
     - [ ] Implement the shopping list aggregation logic.
 - [x] Task: Shopping List UI 3eb1245
     - [ ] Create the shopping list page and template grouped by aisle.
-- [ ] Task: Conductor - User Manual Verification 'Phase 4: Shopping List Module' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 4: Shopping List Module' (Protocol in workflow.md) b15d10f
 
 ## Phase 5: Seed Data & Final Polish
 - [ ] Task: Seed 25 Public Recipes
