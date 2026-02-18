@@ -32,3 +32,18 @@ class RecipeIngredientFormSetTest(TestCase):
         formset = RecipeIngredientFormSet(data=data)
         self.assertFalse(formset.is_valid())
         self.assertIn('name', formset.errors[0])
+
+    def test_ingredient_aisle_field(self):
+        data = {
+            'ingredients-TOTAL_FORMS': '1',
+            'ingredients-INITIAL_FORMS': '0',
+            'ingredients-MIN_NUM_FORMS': '0',
+            'ingredients-MAX_NUM_FORMS': '1000',
+            'ingredients-0-quantity': '1 cup',
+            'ingredients-0-name': 'Milk',
+            'ingredients-0-aisle': 'Dairy',
+            'ingredients-0-order': '0',
+        }
+        formset = RecipeIngredientFormSet(data=data)
+        self.assertTrue(formset.is_valid())
+        self.assertEqual(formset.forms[0].cleaned_data['aisle'], 'Dairy')
