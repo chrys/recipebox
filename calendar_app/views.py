@@ -74,6 +74,90 @@ def update_schedule(request):
     return redirect('admin_settings')
 
 
+import random
+
+@login_required
+@require_POST
+def schedule_current_week(request):
+    """Automatically schedule recipes for the current week based on user settings."""
+    today = date.today()
+    # Monday is 0 in python's weekday(), Sunday is 6
+    monday = today - timedelta(days=today.weekday())
+    sunday = monday + timedelta(days=6)
+    
+    # Check if any entries exist for this week
+    existing_entries = CalendarEntry.objects.filter(
+        user=request.user,
+        date__gte=monday,
+        date__lte=sunday
+    ).exists()
+    
+    if existing_entries:
+        messages.warning(request, "Current week is not empty. Auto-scheduling skipped.")
+        return redirect('calendar_view')
+    
+    # Get user mappings
+    mappings = {m.day_of_week: m.category for m in UserScheduleMapping.objects.filter(user=request.user)}
+    
+    scheduled_count = 0
+    for i in range(7):
+        # UserScheduleMapping uses 0=Sunday, 1=Monday...
+        # range(7) with i=0 is Monday in our date loop, but let's align.
+        current_date = monday + timedelta(days=i)
+        # weekday() 0=Mon, 1=Tue, 2=Wed, 3=Thu, 4=Fri, 5=Sat, 6=Sun
+        # mappings uses 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
+        mapping_day = (i + 1) % 7
+        
+        category = mappings.get(mapping_day)
+        if category:
+            # Pick a random recipe for this category
+            recipes = Recipe.objects.filter(categories=category, user=request.user)
+            if recipes.exists():
+                recipe = random.choice(list(recipes))
+                CalendarEntry.objects.create(
+                    user=request.user,
+                    date=current_date,
+                    recipe=recipe,
+                    meal_type='dinner'
+                )
+                scheduled_count += 1
+    
+    if scheduled_count > 0:
+        messages.success(request, f"Scheduled {scheduled_count} recipes for the week!")
+    else:
+        messages.info(request, "No recipes scheduled. Check your Admin settings and category assignments.")
+        
+    return redirect('calendar_view')
+
+
+@login_required
+@require_POST
+def replace_calendar_recipe(request, pk):
+    """Replace a scheduled recipe with another random recipe from the same category."""
+    entry = get_object_or_404(CalendarEntry, pk=pk, user=request.user)
+    
+    # Get categories of the current recipe
+    categories = entry.recipe.categories.all()
+    if not categories.exists():
+        messages.warning(request, "This recipe has no categories. Cannot find a replacement.")
+        return redirect(f'/calendar/?year={entry.date.year}&month={entry.date.month}')
+    
+    # Find other recipes in the same categories
+    # Use first category for replacement logic
+    category = categories.first()
+    other_recipes = Recipe.objects.filter(categories=category, user=request.user).exclude(pk=entry.recipe.pk)
+    
+    if other_recipes.exists():
+        new_recipe = random.choice(list(other_recipes))
+        entry.recipe = new_recipe
+        entry.save(update_fields=['recipe'])
+        messages.success(request, f'Replaced with "{new_recipe.title}".')
+    else:
+        messages.info(request, f'No other recipes found in category "{category.name}".')
+        
+    return redirect(f'/calendar/?year={entry.date.year}&month={entry.date.month}')
+
+
 @login_required
 def calendar_view(request):
     """Monthly calendar showing scheduled recipes."""
@@ -135,6 +219,15 @@ def calendar_view(request):
     # User's recipes for the add dialog
     user_recipes = Recipe.objects.filter(user=request.user).order_by('title')
 
+    # Check if the current week is empty for the auto-schedule button
+    monday = today - timedelta(days=today.weekday())
+    sunday = monday + timedelta(days=6)
+    has_week_entries = CalendarEntry.objects.filter(
+        user=request.user,
+        date__gte=monday,
+        date__lte=sunday
+    ).exists()
+
     context = {
         'weeks': weeks,
         'year': year,
@@ -147,6 +240,7 @@ def calendar_view(request):
         'today': today,
         'user_recipes': user_recipes,
         'has_entries': entries.exists(),
+        'has_week_entries': has_week_entries,
         'day_names': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     }
     return render(request, 'calendar_app/calendar.html', context)

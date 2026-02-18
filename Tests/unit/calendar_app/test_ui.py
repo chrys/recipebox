@@ -19,3 +19,20 @@ class CalendarUITest(TestCase):
         self.assertContains(response, 'action="%s"' % reverse('add_category'))
         self.assertContains(response, 'action="%s"' % reverse('update_schedule'))
         self.assertContains(response, '<select name="category"')
+
+    def test_schedule_week_button_presence(self):
+        response = self.client.get(reverse('calendar_view'))
+        self.assertContains(response, 'Schedule Current Week')
+        self.assertContains(response, 'action="%s"' % reverse('schedule_current_week'))
+
+    def test_replace_recipe_option_presence(self):
+        from recipes.models import Recipe
+        from calendar_app.models import CalendarEntry
+        from datetime import date
+        
+        recipe = Recipe.objects.create(user=self.user, title='UI Recipe', instructions='Step 1')
+        entry = CalendarEntry.objects.create(user=self.user, date=date.today(), recipe=recipe, meal_type='dinner')
+        
+        response = self.client.get(reverse('calendar_view'))
+        self.assertContains(response, 'Replace Recipe')
+        self.assertContains(response, reverse('replace_calendar_recipe', kwargs={'pk': entry.pk}))

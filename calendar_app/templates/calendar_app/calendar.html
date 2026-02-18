@@ -5,9 +5,18 @@
 {% block content %}
 <!-- Month Navigation -->
 <div class="flex justify-between items-center mb-4">
-    <a href="?year={{ prev_year }}&month={{ prev_month }}" class="button outline small">← Prev</a>
-    <h1 style="margin: 0;">{{ month_name }} {{ year }}</h1>
-    <a href="?year={{ next_year }}&month={{ next_month }}" class="button outline small">Next →</a>
+    <div class="hstack gap-2">
+        <a href="?year={{ prev_year }}&month={{ prev_month }}" class="button outline small">← Prev</a>
+        <h1 style="margin: 0;">{{ month_name }} {{ year }}</h1>
+        <a href="?year={{ next_year }}&month={{ next_month }}" class="button outline small">Next →</a>
+    </div>
+    
+    <form method="post" action="{% url 'schedule_current_week' %}" style="margin: 0;">
+        {% csrf_token %}
+        <button type="submit" class="small" {% if has_week_entries %}disabled title="Current week already has entries"{% endif %}>
+            🪄 Schedule Current Week
+        </button>
+    </form>
 </div>
 
 {% if today.month != month or today.year != year %}
@@ -44,6 +53,10 @@
                                 <button role="menuitem"
                                     onclick="window.location.href='{% url 'recipe_detail' pk=entry.recipe.pk %}'">View
                                     Recipe</button>
+                                <form method="post" action="{% url 'replace_calendar_recipe' pk=entry.pk %}" style="margin:0;">
+                                    {% csrf_token %}
+                                    <button role="menuitem" type="submit">Replace Recipe</button>
+                                </form>
                                 <hr>
                                 <form method="post" action="{% url 'calendar_delete' pk=entry.pk %}" style="margin:0;">
                                     {% csrf_token %}
