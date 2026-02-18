@@ -28,7 +28,7 @@
     - [ ] Create `Tests/unit/calendar_app/test_admin_views.py` and write tests for the Admin settings page access and logic.
     - [ ] Implement `admin_settings` view in `calendar_app/views.py`.
     - [ ] Update `calendar_app/urls.py` and `templates/base.html` for navigation.
-- [ ] Task: Category Management & Schedule Mapping UI
+- [x] Task: Category Management & Schedule Mapping UI a7f4e30
     - [ ] Implement the UI for adding/removing categories and defining the weekly schedule in the Admin page.
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: User-Specific Admin & Category Management' (Protocol in workflow.md)
 
