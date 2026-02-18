@@ -4,15 +4,53 @@ from django.urls import reverse
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(max_length=100, unique=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='categories',
+        null=True, blank=True,
+    )
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100)
 
     class Meta:
         verbose_name_plural = 'categories'
         ordering = ['name']
+        unique_together = ('user', 'slug')
 
     def __str__(self):
         return self.name
+
+
+class UserScheduleMapping(models.Model):
+    DAYS_OF_WEEK = [
+        (0, 'Sunday'),
+        (1, 'Monday'),
+        (2, 'Tuesday'),
+        (3, 'Wednesday'),
+        (4, 'Thursday'),
+        (5, 'Friday'),
+        (6, 'Saturday'),
+    ]
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='schedule_mappings',
+    )
+    day_of_week = models.PositiveSmallIntegerField(choices=DAYS_OF_WEEK)
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+    )
+
+    class Meta:
+        unique_together = ('user', 'day_of_week')
+        ordering = ['day_of_week']
+
+    def __str__(self):
+        return f"{self.user.username}'s {self.get_day_of_week_display()} -> {self.category}"
 
 
 class Recipe(models.Model):

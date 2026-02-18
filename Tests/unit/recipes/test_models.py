@@ -1,8 +1,32 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from recipes.models import Recipe, RecipeIngredient
+from recipes.models import Recipe, RecipeIngredient, Category, UserScheduleMapping
 
 User = get_user_model()
+
+class CategoryModelTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='catuser', password='password123')
+
+    def test_category_user_relation(self):
+        """Test that a category is associated with a user."""
+        category = Category.objects.create(user=self.user, name='Personal', slug='personal')
+        self.assertEqual(category.user, self.user)
+
+class UserScheduleMappingTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='scheduser', password='password123')
+        self.category = Category.objects.create(user=self.user, name='Meat', slug='meat')
+
+    def test_schedule_mapping_creation(self):
+        """Test creating a schedule mapping for a specific day."""
+        mapping = UserScheduleMapping.objects.create(
+            user=self.user,
+            day_of_week=1, # Monday
+            category=self.category
+        )
+        self.assertEqual(mapping.get_day_of_week_display(), 'Monday')
+        self.assertEqual(mapping.category, self.category)
 
 class RecipeModelTest(TestCase):
     def setUp(self):
