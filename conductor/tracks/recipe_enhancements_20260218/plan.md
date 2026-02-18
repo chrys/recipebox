@@ -9,7 +9,7 @@
 - [x] Task: Mark Mandatory Fields in UI b7b1763
     - [ ] Update `recipes/templates/recipes/recipe_form.html` to visually mark mandatory fields.
     - [ ] Add styling for validation error messages using Oat UI classes.
-- [ ] Task: Implement Interactive Star Rating (AJAX)
+- [x] Task: Implement Interactive Star Rating (AJAX) 6062c6b
     - [ ] Create `Tests/unit/recipes/test_rating_view.py` and write failing tests for the rating update logic.
     - [ ] Implement `update_rating` view in `recipes/views.py`.
     - [ ] Create Vanilla JS logic in `static/js/app.js` for AJAX rating submission.
