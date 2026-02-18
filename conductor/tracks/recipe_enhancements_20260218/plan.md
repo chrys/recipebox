@@ -1,6 +1,6 @@
 # Implementation Plan: Recipe Enhancements, Admin Settings & Smart Shopping
 
-## Phase 1: Recipe Model & UI Enhancements
+## Phase 1: Recipe Model & UI Enhancements [checkpoint: 13f33bc]
 - [x] Task: Update Recipe & Ingredient Models ac41696
     - [ ] Create `Tests/unit/recipes/test_models.py` and write failing tests for new fields.
     - [ ] Add `rating` (Integer 1-5) to `Recipe` in `recipes/models.py`.
@@ -17,7 +17,7 @@
 - [x] Task: Update Recipe Form for Aisle Entry 7c87589
     - [ ] Create `Tests/unit/recipes/test_forms.py` and write tests for aisle field in ingredient formset.
     - [ ] Update `RecipeIngredient` formset in `recipes/forms.py` to include `aisle`.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Recipe Model & UI Enhancements' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Recipe Model & UI Enhancements' (Protocol in workflow.md) 13f33bc
 
 ## Phase 2: User-Specific Admin & Category Management
 - [ ] Task: Create Category & Schedule Mapping Models
