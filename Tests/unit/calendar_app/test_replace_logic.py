@@ -28,7 +28,11 @@ class ReplaceRecipeLogicTest(TestCase):
 
     def test_replace_recipe_logic(self):
         response = self.client.post(self.url)
-        self.assertEqual(response.status_code, 302) # Or 200 for AJAX, let's start with redirect
+        # Should redirect to /recipes/calendar/ with query params
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith(reverse('calendar_view')))
+        self.assertIn('year=', response.url)
+        self.assertIn('month=', response.url)
         
         self.entry.refresh_from_db()
         # Should be recipe2 now since it's the only other in the category

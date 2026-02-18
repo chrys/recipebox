@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 
 from django.utils.text import slugify
 from django.views.decorators.http import require_POST
@@ -140,7 +141,7 @@ def replace_calendar_recipe(request, pk):
     categories = entry.recipe.categories.all()
     if not categories.exists():
         messages.warning(request, "This recipe has no categories. Cannot find a replacement.")
-        return redirect(f'/calendar/?year={entry.date.year}&month={entry.date.month}')
+        return redirect(reverse('calendar_view') + f'?year={entry.date.year}&month={entry.date.month}')
     
     # Find other recipes in the same categories
     # Use first category for replacement logic
@@ -155,7 +156,7 @@ def replace_calendar_recipe(request, pk):
     else:
         messages.info(request, f'No other recipes found in category "{category.name}".')
         
-    return redirect(f'/calendar/?year={entry.date.year}&month={entry.date.month}')
+    return redirect(reverse('calendar_view') + f'?year={entry.date.year}&month={entry.date.month}')
 
 
 @login_required
@@ -272,7 +273,7 @@ def calendar_add(request):
     next_url = request.POST.get('next', '')
     if next_url:
         return redirect(next_url)
-    return redirect(f'/calendar/?year={target_date.year}&month={target_date.month}')
+    return redirect(reverse('calendar_view') + f'?year={target_date.year}&month={target_date.month}')
 
 
 @login_required
@@ -285,4 +286,4 @@ def calendar_delete(request, pk):
     entry_date = entry.date
     entry.delete()
     messages.success(request, 'Removed from calendar.')
-    return redirect(f'/calendar/?year={entry_date.year}&month={entry_date.month}')
+    return redirect(reverse('calendar_view') + f'?year={entry_date.year}&month={entry_date.month}')
