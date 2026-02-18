@@ -32,7 +32,7 @@
     - [ ] Implement the UI for adding/removing categories and defining the weekly schedule in the Admin page.
 - [x] Task: Conductor - User Manual Verification 'Phase 2: User-Specific Admin & Category Management' (Protocol in workflow.md) d08ca11
 
-## Phase 3: Smart Calendar Scheduling
+## Phase 3: Smart Calendar Scheduling [checkpoint: 33b1fb2]
 - [x] Task: Implement "Schedule Current Week" Logic ac167fd
     - [ ] Create `Tests/unit/calendar_app/test_scheduling.py` and write tests for the auto-scheduling algorithm.
     - [ ] Implement `schedule_current_week` view and logic.
@@ -43,7 +43,7 @@
     - [ ] Implement `replace_calendar_recipe` AJAX view.
 - [x] Task: "Replace Recipe" UI ac167fd
     - [ ] Update calendar context menu and implement JS for AJAX replacement.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Smart Calendar Scheduling' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Smart Calendar Scheduling' (Protocol in workflow.md) 33b1fb2
 
 ## Phase 4: Shopping List Module
 - [ ] Task: Implement Shopping List Logic
