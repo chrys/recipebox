@@ -19,7 +19,7 @@
     - [ ] Update `RecipeIngredient` formset in `recipes/forms.py` to include `aisle`.
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Recipe Model & UI Enhancements' (Protocol in workflow.md) 13f33bc
 
-## Phase 2: User-Specific Admin & Category Management
+## Phase 2: User-Specific Admin & Category Management [checkpoint: d08ca11]
 - [x] Task: Create Category & Schedule Mapping Models 8ce4407
     - [ ] Create `Tests/unit/calendar_app/test_models.py` and write tests for user-specific categories and schedule mapping.
     - [ ] Update `Category` model and create `UserScheduleMapping` in `recipes/models.py` or `calendar_app/models.py`.
@@ -30,7 +30,7 @@
     - [ ] Update `calendar_app/urls.py` and `templates/base.html` for navigation.
 - [x] Task: Category Management & Schedule Mapping UI a7f4e30
     - [ ] Implement the UI for adding/removing categories and defining the weekly schedule in the Admin page.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: User-Specific Admin & Category Management' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: User-Specific Admin & Category Management' (Protocol in workflow.md) d08ca11
 
 ## Phase 3: Smart Calendar Scheduling
 - [ ] Task: Implement "Schedule Current Week" Logic
