@@ -80,7 +80,8 @@ class RecipeListView(LoginRequiredMixin, ListView):
     paginate_by = 12
 
     def get_queryset(self):
-        qs = Recipe.objects.filter(user=self.request.user)
+        # Show recipes owned by the user OR public recipes
+        qs = Recipe.objects.filter(Q(user=self.request.user) | Q(public=True))
         q = self.request.GET.get('q', '').strip()
         category = self.request.GET.get('category', '').strip()
 

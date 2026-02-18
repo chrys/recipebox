@@ -37,3 +37,16 @@ class RecipeFormTemplateTest(TestCase):
         response = self.client.get(reverse('recipe_list'))
         self.assertContains(response, reverse('shopping_list'))
         self.assertContains(response, 'Shopping List')
+
+    def test_public_recipes_visible_in_list(self):
+        # Create a public recipe owned by another user
+        other_user = User.objects.create_user(username='other', password='password123')
+        Recipe.objects.create(
+            user=other_user,
+            title='Other User Public Recipe',
+            instructions='Step 1',
+            public=True
+        )
+        
+        response = self.client.get(reverse('recipe_list'))
+        self.assertContains(response, 'Other User Public Recipe')
