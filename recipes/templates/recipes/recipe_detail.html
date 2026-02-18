@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load recipe_schema %}
+
+{% block title %}{{ recipe.title }} — RecipeBox{% endblock %}
+{% block meta_description %}{{ recipe.description|truncatewords:25 }}{% endblock %}
+
+{% block content %}
+<!-- Hero Image -->
+{% if recipe.image %}
+<img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="recipe-hero">
+{% endif %}
+
+<!-- Title & Meta -->
+<div class="flex justify-between items-center" style="flex-wrap: wrap; gap: var(--space-2);">
+    <h1>{{ recipe.title }}</h1>
+    <div class="hstack">
+        <a href="{% url 'recipe_edit' pk=recipe.pk %}" class="button outline">Edit</a>
+        <button commandfor="delete-dialog" command="show-modal" data-variant="danger" class="outline">Delete</button>
+        <button commandfor="calendar-dialog" command="show-modal" data-variant="secondary">📅 Add to Calendar</button>
+    </div>
+</div>
+
+{% if recipe.description %}
+<p class="text-light" style="margin-bottom: var(--space-3);">{{ recipe.description }}</p>
+{% endif %}
+
+<!-- Meta info -->
+<div class="recipe-meta">
+    {% for cat in recipe.categories.all %}<span class="badge">{{ cat.name }}</span>{% endfor %}
+    {% if recipe.public %}<span class="badge" data-variant="success">Public</span>{% endif %}
+    {% if recipe.prep_time %}<span>🔪 Prep: {{ recipe.prep_time }} min</span>{% endif %}
+    {% if recipe.cook_time %}<span>🍳 Cook: {{ recipe.cook_time }} min</span>{% endif %}
+    {% if recipe.total_time %}<span>⏱ Total: {{ recipe.total_time }} min</span>{% endif %}
+    {% if recipe.servings %}<span>🍽️ {{ recipe.servings }} servings</span>{% endif %}
+</div>
+
+<!-- Tabbed Content -->
+<ot-tabs>
+    <div role="tablist">
+        <button role="tab">Ingredients</button>
+        <button role="tab">Instructions</button>
+    </div>
+
+    <div role="tabpanel">
+        {% if recipe.ingredients.all %}
+        <ul>
+            {% for ing in recipe.ingredients.all %}
+            <li>
+                {% if ing.quantity %}<strong>{{ ing.quantity }}</strong> {% endif %}{{ ing.name }}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-light">No ingredients listed.</p>
+        {% endif %}
+    </div>
+
+    <div role="tabpanel">
+        {% if recipe.instruction_steps %}
+        <ol>
+            {% for step in recipe.instruction_steps %}
+            <li>{{ step }}</li>
+            {% endfor %}
+        </ol>
+        {% else %}
+        <p class="text-light">No instructions yet.</p>
+        {% endif %}
+    </div>
+</ot-tabs>
+
+<!-- Delete Confirmation Dialog -->
+<dialog id="delete-dialog" closedby="any">
+    <form method="post" action="{% url 'recipe_delete' pk=recipe.pk %}">
+        {% csrf_token %}
+        <header>
+            <h3>Delete Recipe</h3>
+            <p>Are you sure you want to delete <strong>{{ recipe.title }}</strong>? This cannot be undone.</p>
+        </header>
+        <footer>
+            <button type="button" commandfor="delete-dialog" command="close" class="outline">Cancel</button>
+            <button type="submit" data-variant="danger">Delete</button>
+        </footer>
+    </form>
+</dialog>
+
+<!-- Add to Calendar Dialog -->
+<dialog id="calendar-dialog" closedby="any">
+    <form method="post" action="{% url 'calendar_add' %}">
+        {% csrf_token %}
+        <header>
+            <h3>Add to Calendar</h3>
+            <p>Schedule <strong>{{ recipe.title }}</strong> on a date.</p>
+        </header>
+        <div>
+            <input type="hidden" name="recipe" value="{{ recipe.pk }}">
+            <label data-field>
+                Date
+                <input type="date" name="date" id="calendar-date-input" required>
+            </label>
+            <fieldset class="hstack">
+                <legend>Meal</legend>
+                <label><input type="radio" name="meal_type" value="breakfast"> Breakfast</label>
+                <label><input type="radio" name="meal_type" value="lunch"> Lunch</label>
+                <label><input type="radio" name="meal_type" value="dinner" checked> Dinner</label>
+                <label><input type="radio" name="meal_type" value="snack"> Snack</label>
+            </fieldset>
+        </div>
+        <footer>
+            <button type="button" commandfor="calendar-dialog" command="close" class="outline">Cancel</button>
+            <button type="submit">Add to Calendar</button>
+        </footer>
+    </form>
+</dialog>
+
+{% block json_ld %}
+{% recipe_json_ld recipe request %}
+{% endblock %}
+{% endblock %}

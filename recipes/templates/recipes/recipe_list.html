@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load recipe_schema %}
+
+{% block title %}My Recipes — RecipeBox{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-4" style="flex-wrap: wrap; gap: var(--space-2);">
+    <h1>My Recipes</h1>
+    <a href="{% url 'recipe_create' %}" class="button">+ New Recipe</a>
+</div>
+
+<!-- Search & Filter -->
+<form method="get" action="{% url 'recipe_list' %}" style="margin-bottom: var(--space-4);">
+    <fieldset class="group">
+        <input type="text" name="q" value="{{ search_query }}" placeholder="Search recipes…">
+        <select name="category">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+            <option value="{{ cat.slug }}" {% if current_category == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Search</button>
+    </fieldset>
+</form>
+
+{% if recipes %}
+<div class="container">
+    <div class="row" style="gap: var(--space-4) 0;">
+        {% for recipe in recipes %}
+        <div class="col-4">
+            <article class="card" style="height: 100%;">
+                <a href="{{ recipe.get_absolute_url }}" style="text-decoration: none; color: inherit;">
+                    {% if recipe.image %}
+                    <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="recipe-card-img">
+                    {% else %}
+                    <div class="recipe-card-placeholder">🍽️</div>
+                    {% endif %}
+                    <header style="padding: var(--space-3);">
+                        <h3 style="margin: 0;">{{ recipe.title }}</h3>
+                        {% if recipe.description %}
+                        <p style="margin: var(--space-1) 0 0; font-size: 0.9rem;" class="text-light">
+                            {{ recipe.description|truncatewords:15 }}
+                        </p>
+                        {% endif %}
+                    </header>
+                </a>
+                <footer class="flex justify-between items-center" style="padding: 0 var(--space-3) var(--space-3);">
+                    <div style="display: flex; gap: var(--space-1); flex-wrap: wrap;">
+                        {% for cat in recipe.categories.all %}<span class="badge">{{ cat.name }}</span>{% endfor %}
+                    </div>
+                    {% if recipe.total_time %}
+                    <small class="text-light">⏱ {{ recipe.total_time }} min</small>
+                    {% endif %}
+                </footer>
+            </article>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<div class="flex justify-center mt-6 gap-2">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}"
+        class="button outline small">← Prev</a>
+    {% endif %}
+    <span class="flex items-center" style="padding: 0 var(--space-2);">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}"
+        class="button outline small">Next →</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div role="alert" data-variant="warning" style="text-align: center;">
+    <strong>No recipes yet!</strong>
+    <p>Get started by <a href="{% url 'recipe_create' %}">creating your first recipe</a>.</p>
+</div>
+{% endif %}
+
+{% block json_ld %}
+{% if recipes %}
+{% recipe_list_json_ld recipes request %}
+{% endif %}
+{% endblock %}
+{% endblock %}

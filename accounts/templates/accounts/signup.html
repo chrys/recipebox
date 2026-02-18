@@ -1,0 +1,60 @@
+{% extends "base_auth.html" %}
+
+{% block title %}Sign Up — RecipeBox{% endblock %}
+
+{% block content %}
+<h1>🍳 Sign Up</h1>
+
+<article class="card">
+    <form method="post">
+        {% csrf_token %}
+
+        {% if form.errors %}
+        <div role="alert" data-variant="error">
+            <strong>Please fix the errors below.</strong>
+        </div>
+        {% endif %}
+
+        <div data-field{% if form.username.errors %}="error" {% endif %}>
+            <label for="id_username">Username</label>
+            <input type="text" name="username" id="id_username" value="{{ form.username.value|default_if_none:'' }}"
+                placeholder="Choose a username" required autofocus>
+            {% if form.username.errors %}
+            <div class="error" role="status">{{ form.username.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div data-field{% if form.email.errors %}="error" {% endif %}>
+            <label for="id_email">Email</label>
+            <input type="email" name="email" id="id_email" value="{{ form.email.value|default_if_none:'' }}"
+                placeholder="you@example.com">
+            {% if form.email.errors %}
+            <div class="error" role="status">{{ form.email.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div data-field{% if form.password1.errors %}="error" {% endif %}>
+            <label for="id_password1">Password</label>
+            <input type="password" name="password1" id="id_password1" placeholder="Create a password" required>
+            {% if form.password1.errors %}
+            <div class="error" role="status">{{ form.password1.errors.0 }}</div>
+            {% endif %}
+            <small data-hint>At least 8 characters.</small>
+        </div>
+
+        <div data-field{% if form.password2.errors %}="error" {% endif %}>
+            <label for="id_password2">Confirm password</label>
+            <input type="password" name="password2" id="id_password2" placeholder="Repeat your password" required>
+            {% if form.password2.errors %}
+            <div class="error" role="status">{{ form.password2.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="w-100" style="margin-top: var(--space-3);">Create Account</button>
+    </form>
+
+    <footer style="text-align: center; margin-top: var(--space-4);">
+        <p>Already have an account? <a href="{% url 'account_login' %}">Login</a></p>
+    </footer>
+</article>
+{% endblock %}

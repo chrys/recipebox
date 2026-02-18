@@ -1,0 +1,3 @@
+[submodule "oat-ui"]
+	path = oat-ui
+	url = https://github.com/knadh/oat

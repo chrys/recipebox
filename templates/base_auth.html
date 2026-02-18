@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}RecipeBox{% endblock %}</title>
+    <meta name="description"
+        content="{% block meta_description %}Sign in to RecipeBox — your personal recipe manager.{% endblock %}">
+    <link rel="stylesheet" href="{% static 'oat/oat.css' %}">
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+</head>
+
+<body>
+    <div class="auth-container">
+        {% block content %}{% endblock %}
+    </div>
+    <script src="{% static 'oat/oat.js' %}" defer></script>
+</body>
+
+</html>

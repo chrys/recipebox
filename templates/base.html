@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}RecipeBox{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}RecipeBox — Your personal recipe manager and meal planner.{% endblock %}">
+  <link rel="stylesheet" href="{% static 'oat/oat.css' %}">
+  <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body data-sidebar-layout {% if request.session.theme == 'dark' %}data-theme="dark"{% endif %}>
+
+  <!-- Top nav -->
+  <nav data-topnav>
+    <button data-sidebar-toggle aria-label="Toggle menu" class="outline">☰</button>
+    <span><strong>🍳 RecipeBox</strong></span>
+    <span style="flex:1"></span>
+    <button id="dark-mode-toggle" class="ghost small" aria-label="Toggle dark mode">🌙</button>
+    {% if user.is_authenticated %}
+    <ot-dropdown>
+      <button popovertarget="user-menu" class="ghost small">
+        {{ user.username }}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <menu popover id="user-menu">
+        <button role="menuitem" onclick="window.location.href='{% url 'account_logout' %}'">Logout</button>
+      </menu>
+    </ot-dropdown>
+    {% endif %}
+  </nav>
+
+  <!-- Sidebar -->
+  <aside data-sidebar>
+    <header style="padding: var(--space-3);">
+      <strong>🍳 RecipeBox</strong>
+    </header>
+    <nav>
+      <ul>
+        <li><a href="{% url 'recipe_list' %}" {% if request.resolver_match.url_name == 'recipe_list' %}aria-current="page"{% endif %}>🏠 Recipes</a></li>
+        <li><a href="{% url 'calendar_view' %}" {% if request.resolver_match.url_name == 'calendar_view' %}aria-current="page"{% endif %}>📅 Calendar</a></li>
+      </ul>
+    </nav>
+    <footer style="padding: var(--space-3);">
+      {% if user.is_authenticated %}
+      <small class="text-light">Logged in as <strong>{{ user.username }}</strong></small>
+      {% endif %}
+    </footer>
+  </aside>
+
+  <!-- Main content -->
+  <main>
+    <div style="padding: var(--space-4);">
+      <!-- Django messages (consumed by app.js → oat toasts) -->
+      {% if messages %}
+      <div id="django-messages" hidden>
+        {% for message in messages %}
+        <span data-msg data-level="{{ message.tags }}">{{ message }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <script src="{% static 'oat/oat.js' %}" defer></script>
+  <script src="{% static 'js/app.js' %}" defer></script>
+  {% block extra_js %}{% endblock %}
+
+  {% block json_ld %}{% endblock %}
+</body>
+</html>

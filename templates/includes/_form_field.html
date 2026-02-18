@@ -1,0 +1,13 @@
+{# Reusable form field include — consistent error display with oat-ui data-field pattern.
+Usage: {% include "includes/_form_field.html" with field=form.title %}
+#}
+<div {% if field.errors %}data-field="error" {% else %}data-field{% endif %}>
+    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {{ field }}
+    {% if field.help_text %}
+    <small data-hint>{{ field.help_text }}</small>
+    {% endif %}
+    {% if field.errors %}
+    <div class="error" role="status">{{ field.errors.0 }}</div>
+    {% endif %}
+</div>

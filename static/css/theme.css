@@ -1,0 +1,239 @@
+/*
+ * RecipeBox — Custom Theme
+ * Warm food-inspired colour palette applied via oat-ui CSS variables.
+ */
+
+:root {
+  --primary: #d97706;
+  --primary-foreground: #fff;
+  --secondary: #fef3c7;
+  --secondary-foreground: #92400e;
+  --accent: #f59e0b;
+  --accent-foreground: #1c1917;
+  --background: #fffbeb;
+  --foreground: #1c1917;
+  --card: #ffffff;
+  --card-foreground: #1c1917;
+  --border: #e5e7eb;
+  --input: #d4d4d8;
+  --ring: #d97706;
+  --muted: #f5f5f4;
+  --muted-foreground: #78716c;
+  --faint: #fefce8;
+  --faint-foreground: #a8a29e;
+  --danger: #dc2626;
+  --danger-foreground: #fff;
+  --success: #16a34a;
+  --success-foreground: #fff;
+  --warning: #f59e0b;
+  --warning-foreground: #1c1917;
+}
+
+[data-theme="dark"] {
+  --primary: #f59e0b;
+  --primary-foreground: #1c1917;
+  --secondary: #44403c;
+  --secondary-foreground: #fef3c7;
+  --accent: #d97706;
+  --accent-foreground: #fff;
+  --background: #1c1917;
+  --foreground: #fafaf9;
+  --card: #292524;
+  --card-foreground: #fafaf9;
+  --border: #44403c;
+  --input: #57534e;
+  --ring: #f59e0b;
+  --muted: #292524;
+  --muted-foreground: #a8a29e;
+  --faint: #1c1917;
+  --faint-foreground: #78716c;
+  --danger: #ef4444;
+  --danger-foreground: #fff;
+  --success: #22c55e;
+  --success-foreground: #fff;
+  --warning: #f59e0b;
+  --warning-foreground: #1c1917;
+}
+
+/* ---- RecipeBox-specific styles ---- */
+
+/* Recipe card image */
+.recipe-card-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: var(--radius, 0.375rem) var(--radius, 0.375rem) 0 0;
+}
+
+.recipe-card-placeholder {
+  width: 100%;
+  height: 180px;
+  background: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-foreground);
+  font-size: 3rem;
+  border-radius: var(--radius, 0.375rem) var(--radius, 0.375rem) 0 0;
+}
+
+/* Recipe detail hero */
+.recipe-hero {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: var(--radius, 0.375rem);
+  margin-bottom: var(--space-4, 1rem);
+}
+
+.recipe-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3, 0.75rem);
+  align-items: center;
+  margin-bottom: var(--space-4, 1rem);
+  color: var(--muted-foreground);
+}
+
+.recipe-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Calendar */
+.calendar-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.calendar-table th {
+  text-align: center;
+  font-size: 0.85rem;
+  padding: var(--space-2, 0.5rem);
+}
+
+.calendar-table td {
+  vertical-align: top;
+  height: 100px;
+  padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
+  border: 1px solid var(--border);
+  position: relative;
+}
+
+.calendar-table td.today {
+  background: var(--secondary);
+}
+
+.calendar-table td.other-month {
+  opacity: 0.4;
+}
+
+.calendar-day-num {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: var(--space-1, 0.25rem);
+}
+
+.calendar-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.calendar-add-btn {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  font-size: 0.75rem;
+  padding: 0 0.4rem;
+  line-height: 1.5;
+}
+
+/* Ingredient row styling */
+.ingredient-row {
+  display: flex;
+  gap: var(--space-2, 0.5rem);
+  align-items: flex-end;
+  margin-bottom: var(--space-2, 0.5rem);
+}
+
+.ingredient-row input {
+  flex: 1;
+}
+
+/* Auth pages centered layout */
+.auth-container {
+  max-width: 420px;
+  margin: 4rem auto;
+  padding: 0 var(--space-4, 1rem);
+}
+
+.auth-container h1 {
+  text-align: center;
+  margin-bottom: var(--space-4, 1rem);
+}
+
+/* Meal type badge colors */
+.badge.meal-breakfast {
+  background: #fbbf24;
+  color: #1c1917;
+}
+
+.badge.meal-lunch {
+  background: #34d399;
+  color: #1c1917;
+}
+
+.badge.meal-dinner {
+  background: #60a5fa;
+  color: #1c1917;
+}
+
+.badge.meal-snack {
+  background: #c084fc;
+  color: #1c1917;
+}
+
+/* ---- Responsive grid breakpoints ---- */
+
+/* 3-column → 2-column on tablets */
+@media (max-width: 992px) {
+  .col-4 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+/* 2-column → 1-column on mobile */
+@media (max-width: 600px) {
+  .col-4 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .calendar-table td {
+    height: 60px;
+    font-size: 0.75rem;
+  }
+
+  .calendar-add-btn {
+    display: none;
+  }
+
+  .recipe-hero {
+    max-height: 240px;
+  }
+
+  .auth-container {
+    margin: 2rem auto;
+  }
+}
+
+/* Calendar empty state */
+.calendar-empty-msg {
+  text-align: center;
+  padding: var(--space-6, 1.5rem) var(--space-4, 1rem);
+  color: var(--muted-foreground);
+  font-style: italic;
+}

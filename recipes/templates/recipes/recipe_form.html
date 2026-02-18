@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}{% if is_edit %}Edit {{ form.instance.title }}{% else %}New Recipe{% endif %} — RecipeBox{% endblock %}
+
+{% block content %}
+<h1>{% if is_edit %}Edit Recipe{% else %}New Recipe{% endif %}</h1>
+
+<article class="card" style="padding: var(--space-4);">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% if form.errors %}
+        <div role="alert" data-variant="error" style="margin-bottom: var(--space-3);">
+            <strong>Please fix the errors below.</strong>
+        </div>
+        {% endif %}
+
+        <!-- Title -->
+        <div {% if form.title.errors %}data-field="error"{% else %}data-field{% endif %}>
+            <label for="id_title">Title</label>
+            {{ form.title }}
+            {% if form.title.errors %}<div class="error" role="status">{{ form.title.errors.0 }}</div>{% endif %}
+        </div>
+
+        <!-- Description -->
+        <div {% if form.description.errors %}data-field="error"{% else %}data-field{% endif %}>
+            <label for="id_description">Description</label>
+            {{ form.description }}
+            {% if form.description.errors %}<div class="error" role="status">{{ form.description.errors.0 }}</div>{% endif %}
+        </div>
+
+        <!-- Categories -->
+        <div {% if form.categories.errors %}data-field="error"{% else %}data-field{% endif %}>
+            <label>Categories</label>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-1);">
+                {% for checkbox in form.categories %}
+                <label style="display: flex; align-items: center; gap: var(--space-1); font-weight: normal;">
+                    {{ checkbox.tag }} {{ checkbox.choice_label }}
+                </label>
+                {% endfor %}
+            </div>
+            {% if form.categories.errors %}<div class="error" role="status">{{ form.categories.errors.0 }}</div>{% endif %}
+        </div>
+
+        <!-- Times & Servings -->
+        <div class="container">
+            <div class="row">
+                <div class="col-4">
+                    <div data-field>
+                        <label for="id_prep_time">Prep Time (min)</label>
+                        {{ form.prep_time }}
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div data-field>
+                        <label for="id_cook_time">Cook Time (min)</label>
+                        {{ form.cook_time }}
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div data-field>
+                        <label for="id_servings">Servings</label>
+                        {{ form.servings }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image -->
+        <div data-field>
+            <label for="id_image">Photo</label>
+            {% if form.instance.image %}
+            <p><img src="{{ form.instance.image.url }}" alt="Current photo"
+                    style="max-height: 120px; border-radius: var(--radius, 0.375rem);"></p>
+            {% endif %}
+            {{ form.image }}
+        </div>
+
+        <!-- Visibility -->
+        <div data-field>
+            <label style="display: flex; align-items: center; gap: var(--space-2); font-weight: normal; cursor: pointer;">
+                {{ form.public }} Make this recipe public (visible to all users)
+            </label>
+        </div>
+
+        <!-- Ingredients -->
+        <h3 style="margin-top: var(--space-4);">Ingredients</h3>
+        {{ formset.management_form }}
+        <div id="ingredient-formset">
+            {% for ing_form in formset %}
+            <div class="ingredient-row" {% if ing_form.DELETE.value %}style="display:none;" {% endif %}>
+                <input type="hidden" name="{{ ing_form.order.html_name }}" value="{{ forloop.counter0 }}">
+                {{ ing_form.id }}
+                <input type="text" name="{{ ing_form.quantity.html_name }}"
+                    value="{{ ing_form.quantity.value|default_if_none:'' }}" placeholder="Quantity"
+                    style="max-width: 120px;">
+                <input type="text" name="{{ ing_form.name.html_name }}"
+                    value="{{ ing_form.name.value|default_if_none:'' }}" placeholder="Ingredient name">
+                {% if ing_form.DELETE %}
+                <input type="hidden" name="{{ ing_form.DELETE.html_name }}"
+                    value="{{ ing_form.DELETE.value|default_if_none:'' }}">
+                {% endif %}
+                <button type="button" class="remove-ingredient outline small" data-variant="danger">✕</button>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Empty form template for JS -->
+        <template id="empty-ingredient-form">
+            <input type="hidden" name="ingredients-__prefix__-order" value="0">
+            <input type="hidden" name="ingredients-__prefix__-id" value="">
+            <input type="text" name="ingredients-__prefix__-quantity" placeholder="Quantity" style="max-width: 120px;">
+            <input type="text" name="ingredients-__prefix__-name" placeholder="Ingredient name">
+            <button type="button" class="remove-ingredient outline small" data-variant="danger">✕</button>
+        </template>
+
+        <button type="button" id="add-ingredient" class="outline small" style="margin-top: var(--space-2);">+ Add Ingredient</button>
+
+        <!-- Instructions -->
+        <div {% if form.instructions.errors %}data-field="error"{% else %}data-field{% endif %} style="margin-top: var(--space-4);">
+            <label for="id_instructions">Instructions</label>
+            <small data-hint>One step per line.</small>
+            {{ form.instructions }}
+            {% if form.instructions.errors %}<div class="error" role="status">{{ form.instructions.errors.0 }}</div>{% endif %}
+        </div>
+
+        <!-- Actions -->
+        <footer class="flex gap-2 mt-4">
+            <button type="submit">{% if is_edit %}Save Changes{% else %}Create Recipe{% endif %}</button>
+            <a href="{% if is_edit %}{{ form.instance.get_absolute_url }}{% else %}{% url 'recipe_list' %}{% endif %}"
+                class="button outline">Cancel</a>
+        </footer>
+    </form>
+</article>
+{% endblock %}

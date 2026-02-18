@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Calendar — RecipeBox{% endblock %}
+
+{% block content %}
+<!-- Month Navigation -->
+<div class="flex justify-between items-center mb-4">
+    <a href="?year={{ prev_year }}&month={{ prev_month }}" class="button outline small">← Prev</a>
+    <h1 style="margin: 0;">{{ month_name }} {{ year }}</h1>
+    <a href="?year={{ next_year }}&month={{ next_month }}" class="button outline small">Next →</a>
+</div>
+
+{% if today.month != month or today.year != year %}
+<div class="text-center mb-4">
+    <a href="?year={{ today.year }}&month={{ today.month }}" class="button ghost small">Go to Today</a>
+</div>
+{% endif %}
+
+<!-- Calendar Grid -->
+<div style="overflow-x: auto;">
+    <table class="calendar-table">
+        <thead>
+            <tr>
+                {% for day_name in day_names %}
+                <th>{{ day_name }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for week in weeks %}
+            <tr>
+                {% for day in week %}
+                <td
+                    class="{% if day.is_today %}today{% endif %} {% if not day.is_current_month %}other-month{% endif %}">
+                    <div class="calendar-day-num">{{ day.date.day }}</div>
+                    <div class="calendar-entries">
+                        {% for entry in day.entries %}
+                        <ot-dropdown>
+                            <button popovertarget="entry-{{ entry.pk }}" class="badge meal-{{ entry.meal_type }}"
+                                style="cursor: pointer; border: none; font-size: 0.7rem; padding: 1px 6px;">
+                                {{ entry.recipe.title|truncatechars:12 }}
+                            </button>
+                            <menu popover id="entry-{{ entry.pk }}">
+                                <button role="menuitem"
+                                    onclick="window.location.href='{% url 'recipe_detail' pk=entry.recipe.pk %}'">View
+                                    Recipe</button>
+                                <hr>
+                                <form method="post" action="{% url 'calendar_delete' pk=entry.pk %}" style="margin:0;">
+                                    {% csrf_token %}
+                                    <button role="menuitem" type="submit" style="color: var(--danger);">Remove</button>
+                                </form>
+                            </menu>
+                        </ot-dropdown>
+                        {% endfor %}
+                    </div>
+                    {% if day.is_current_month %}
+                    <button class="calendar-add-btn ghost small" data-date="{{ day.date|date:'Y-m-d' }}"
+                        commandfor="add-recipe-dialog" command="show-modal">+</button>
+                    {% endif %}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if not has_entries %}
+<p class="calendar-empty-msg">No meals planned this month. Click <strong>+</strong> on any day to schedule a recipe.</p>
+{% endif %}
+
+<!-- Add Recipe Dialog -->
+<dialog id="add-recipe-dialog" closedby="any">
+    <form method="post" action="{% url 'calendar_add' %}">
+        {% csrf_token %}
+        <header>
+            <h3>Add Recipe to Calendar</h3>
+        </header>
+        <div>
+            <label data-field>
+                Date
+                <input type="date" name="date" id="calendar-date-input" required>
+            </label>
+
+            <div data-field>
+                <label for="cal-recipe-select">Recipe</label>
+                <select name="recipe" id="cal-recipe-select" required>
+                    <option value="">Select a recipe…</option>
+                    {% for r in user_recipes %}
+                    <option value="{{ r.pk }}">{{ r.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <fieldset class="hstack">
+                <legend>Meal</legend>
+                <label><input type="radio" name="meal_type" value="breakfast"> Breakfast</label>
+                <label><input type="radio" name="meal_type" value="lunch"> Lunch</label>
+                <label><input type="radio" name="meal_type" value="dinner" checked> Dinner</label>
+                <label><input type="radio" name="meal_type" value="snack"> Snack</label>
+            </fieldset>
+        </div>
+        <footer>
+            <button type="button" commandfor="add-recipe-dialog" command="close" class="outline">Cancel</button>
+            <button type="submit">Add</button>
+        </footer>
+    </form>
+</dialog>
+{% endblock %}

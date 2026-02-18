@@ -1,0 +1,36 @@
+{% extends "base_auth.html" %}
+
+{% block title %}Login — RecipeBox{% endblock %}
+
+{% block content %}
+<h1>🍳 Login</h1>
+
+<article class="card">
+    <form method="post">
+        {% csrf_token %}
+
+        {% if form.errors %}
+        <div role="alert" data-variant="error">
+            <strong>Login failed.</strong> Please check your credentials.
+        </div>
+        {% endif %}
+
+        <label data-field>
+            Username
+            <input type="text" name="username" value="{{ form.username.value|default_if_none:'' }}"
+                placeholder="Your username" required autofocus>
+        </label>
+
+        <label data-field>
+            Password
+            <input type="password" name="password" placeholder="Your password" required>
+        </label>
+
+        <button type="submit" class="w-100" style="margin-top: var(--space-3);">Login</button>
+    </form>
+
+    <footer style="text-align: center; margin-top: var(--space-4);">
+        <p>Don't have an account? <a href="{% url 'account_signup' %}">Sign up</a></p>
+    </footer>
+</article>
+{% endblock %}
