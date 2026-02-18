@@ -33,15 +33,15 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 2: User-Specific Admin & Category Management' (Protocol in workflow.md) d08ca11
 
 ## Phase 3: Smart Calendar Scheduling
-- [ ] Task: Implement "Schedule Current Week" Logic
+- [x] Task: Implement "Schedule Current Week" Logic ac167fd
     - [ ] Create `Tests/unit/calendar_app/test_scheduling.py` and write tests for the auto-scheduling algorithm.
     - [ ] Implement `schedule_current_week` view and logic.
-- [ ] Task: "Schedule Current Week" UI
+- [x] Task: "Schedule Current Week" UI ac167fd
     - [ ] Add the button to the calendar and implement JS for conditional enabling (empty week check).
-- [ ] Task: Implement "Replace Recipe" Logic
+- [x] Task: Implement "Replace Recipe" Logic ac167fd
     - [ ] Create `Tests/unit/calendar_app/test_replace_logic.py` and write tests for replacing a recipe with another from the same category.
     - [ ] Implement `replace_calendar_recipe` AJAX view.
-- [ ] Task: "Replace Recipe" UI
+- [x] Task: "Replace Recipe" UI ac167fd
     - [ ] Update calendar context menu and implement JS for AJAX replacement.
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Smart Calendar Scheduling' (Protocol in workflow.md)
 
