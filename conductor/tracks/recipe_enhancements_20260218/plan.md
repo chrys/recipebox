@@ -6,7 +6,7 @@
     - [ ] Add `rating` (Integer 1-5) to `Recipe` in `recipes/models.py`.
     - [ ] Add `aisle` (CharField) to `RecipeIngredient` in `recipes/models.py`.
     - [ ] Create and run migrations.
-- [ ] Task: Mark Mandatory Fields in UI
+- [x] Task: Mark Mandatory Fields in UI b7b1763
     - [ ] Update `recipes/templates/recipes/recipe_form.html` to visually mark mandatory fields.
     - [ ] Add styling for validation error messages using Oat UI classes.
 - [ ] Task: Implement Interactive Star Rating (AJAX)
