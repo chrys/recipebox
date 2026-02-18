@@ -14,7 +14,7 @@
     - [ ] Implement `update_rating` view in `recipes/views.py`.
     - [ ] Create Vanilla JS logic in `static/js/app.js` for AJAX rating submission.
     - [ ] Update `recipes/templates/recipes/recipe_detail.html` to include the star rating component.
-- [ ] Task: Update Recipe Form for Aisle Entry
+- [x] Task: Update Recipe Form for Aisle Entry 7c87589
     - [ ] Create `Tests/unit/recipes/test_forms.py` and write tests for aisle field in ingredient formset.
     - [ ] Update `RecipeIngredient` formset in `recipes/forms.py` to include `aisle`.
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Recipe Model & UI Enhancements' (Protocol in workflow.md)
