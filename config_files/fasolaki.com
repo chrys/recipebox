@@ -288,6 +288,39 @@ server {
 		proxy_send_timeout 60s;
 		proxy_read_timeout 60s;
 	}
+	# -----------------------------------------------------------------------
+	# RecipeBox Django app — www.fasolaki.com/recipes/
+	# -----------------------------------------------------------------------
+
+	# Static files (collected via: python manage.py collectstatic)
+	location /recipes/static/ {
+		alias /srv/recipes/staticfiles/;
+		expires 30d;
+		access_log off;
+		add_header Cache-Control "public, immutable";
+	}
+
+	# User-uploaded media files
+	location /recipes/media/ {
+		alias /srv/recipes/media/;
+		expires 7d;
+		access_log off;
+	}
+
+	# All dynamic requests (app, accounts, calendar, admin) proxied to gunicorn
+	location /recipes/ {
+		proxy_pass http://unix:/run/recipes/recipes.sock;
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_redirect off;
+
+		proxy_connect_timeout 60s;
+		proxy_send_timeout 120s;
+		proxy_read_timeout 120s;
+	}
+
 	# Deny access to .htaccess files
 
         location ~ /\.ht {

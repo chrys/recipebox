@@ -9,4 +9,9 @@
 2.3 In the admin page the users can define the schedule, meaning which category of food for which day.  
 3 Calendar 
 3.1 Add button schedule current week: When user presses this button, the system should add a recipe for each day of the week according to the configuration of 2.3. This button should be enabled only when the current week does not have recipes. 
-3.2 When a recipe s selected the current options are View Recipe and Remove. Add another option Replace Recipe. When this option is selected the recipe will be replaced with another recipe of the same category. 
+3.2 When a recipe is selected the current options are View Recipe and Remove. Add another option Replace Recipe. When this option is selected the recipe will be replaced with another recipe of the same category. 
+4 Shopping list 
+4.1 Create a fourth page called shopping list
+4.2 This page should contain All the ingredients of recipes of future dates. So if for example today is Monday and I have recipes in the calendar until Thursday, it should contain all the ingredients for the recipes of Monday to Thursday. 
+4.3 Ingredients should be categorised per supermarket aisle. 
+

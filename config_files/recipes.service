@@ -1,0 +1,41 @@
+[Unit]
+Description=RecipeBox gunicorn daemon
+Documentation=https://docs.gunicorn.org
+After=network.target postgresql.service
+
+[Service]
+Type=notify
+
+# The user that owns /srv/recipes — change if different
+User=www-data
+Group=www-data
+
+WorkingDirectory=/srv/recipes
+
+# Load environment variables from the .env file next to manage.py
+EnvironmentFile=/srv/recipes/.env
+
+# Gunicorn: bind to a unix socket, log to stdout (journalctl captures it)
+ExecStart=/srv/recipes/.venv/bin/gunicorn \
+    --workers 3 \
+    --bind unix:/run/recipes/recipes.sock \
+    --access-logfile - \
+    --error-logfile - \
+    --log-level warning \
+    --timeout 120 \
+    recipebox.wsgi:application
+
+# Automatically create the runtime directory for the socket
+RuntimeDirectory=recipes
+RuntimeDirectoryMode=0755
+
+# Restart policy
+Restart=on-failure
+RestartSec=5
+
+# Clean shutdown
+KillMode=mixed
+TimeoutStopSec=5
+
+[Install]
+WantedBy=multi-user.target

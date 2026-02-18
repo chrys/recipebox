@@ -5,11 +5,13 @@ from django.urls import include, path
 from django.views.generic import RedirectView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', RedirectView.as_view(url='/recipes/', permanent=False)),
-    path('accounts/', include('accounts.urls')),
+    # Everything lives under /recipes/ — one nginx location block, no conflicts
+    path('recipes/admin/', admin.site.urls),
+    path('recipes/accounts/', include('accounts.urls')),
+    path('recipes/calendar/', include('calendar_app.urls')),
     path('recipes/', include('recipes.urls')),
-    path('calendar/', include('calendar_app.urls')),
+    # Root redirect so hitting / sends the user somewhere sensible
+    path('', RedirectView.as_view(url='/recipes/', permanent=False)),
 ]
 
 # Serve media files in development
