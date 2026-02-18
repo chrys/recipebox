@@ -24,7 +24,7 @@
     - [ ] Create `Tests/unit/calendar_app/test_models.py` and write tests for user-specific categories and schedule mapping.
     - [ ] Update `Category` model and create `UserScheduleMapping` in `recipes/models.py` or `calendar_app/models.py`.
     - [ ] Create and run migrations.
-- [ ] Task: Implement Admin View & Navigation
+- [x] Task: Implement Admin View & Navigation 76c6e1d
     - [ ] Create `Tests/unit/calendar_app/test_admin_views.py` and write tests for the Admin settings page access and logic.
     - [ ] Implement `admin_settings` view in `calendar_app/views.py`.
     - [ ] Update `calendar_app/urls.py` and `templates/base.html` for navigation.
