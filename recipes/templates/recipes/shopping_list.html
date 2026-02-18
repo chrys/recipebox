@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Shopping List — RecipeBox{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-4">
+    <h1>🛒 Shopping List</h1>
+    <button class="button outline small" onclick="window.print()">Print List</button>
+</div>
+
+{% if ingredients_by_aisle %}
+<div class="container">
+    <div class="row" style="gap: var(--space-4) 0;">
+        {% for aisle, ingredients in ingredients_by_aisle.items %}
+        <div class="col-6">
+            <section class="card h-full">
+                <header><h3>{{ aisle }}</h3></header>
+                <div style="padding: var(--space-4);">
+                    <ul style="list-style: none; padding: 0;">
+                        {% for ing in ingredients %}
+                        <li class="flex items-start gap-2 mb-2">
+                            <input type="checkbox" style="margin-top: 4px;">
+                            <div>
+                                <strong>{{ ing.quantity }}</strong> {{ ing.name }}
+                                <br>
+                                <small class="text-light">({{ ing.recipe }})</small>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </section>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div role="alert" data-variant="info" style="text-align: center;">
+    <strong>Your shopping list is empty.</strong>
+    <p>Schedule some recipes in your <a href="{% url 'calendar_view' %}">calendar</a> to see the ingredients you'll need.</p>
+</div>
+{% endif %}
+{% endblock %}

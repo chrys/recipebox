@@ -32,3 +32,8 @@ class RecipeFormTemplateTest(TestCase):
         # List view
         response = self.client.get(reverse('recipe_list'))
         self.assertContains(response, 'class="recipe-rating"')
+
+    def test_sidebar_shopping_list_link(self):
+        response = self.client.get(reverse('recipe_list'))
+        self.assertContains(response, reverse('shopping_list'))
+        self.assertContains(response, 'Shopping List')

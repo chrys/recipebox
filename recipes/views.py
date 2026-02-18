@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
 from django.views.generic import (
@@ -12,6 +12,41 @@ from django.views.generic import (
 import json
 from .models import Recipe, Category
 from .forms import RecipeForm, RecipeIngredientFormSet
+
+
+from datetime import date
+from calendar_app.models import CalendarEntry
+from collections import defaultdict
+
+@login_required
+def shopping_list(request):
+    """Aggregate ingredients for recipes scheduled from today onwards."""
+    today = date.today()
+    entries = CalendarEntry.objects.filter(
+        user=request.user,
+        date__gte=today
+    ).select_related('recipe').prefetch_related('recipe__ingredients')
+    
+    ingredients_by_aisle = defaultdict(list)
+    
+    # Track unique ingredients to combine quantities if they are the same name in the same aisle
+    # For now, let's keep it simple and just group them.
+    for entry in entries:
+        for ing in entry.recipe.ingredients.all():
+            aisle = ing.aisle or 'General'
+            ingredients_by_aisle[aisle].append({
+                'name': ing.name,
+                'quantity': ing.quantity,
+                'recipe': entry.recipe.title
+            })
+            
+    # Sort aisles alphabetically
+    sorted_ingredients = dict(sorted(ingredients_by_aisle.items()))
+    
+    context = {
+        'ingredients_by_aisle': sorted_ingredients,
+    }
+    return render(request, 'recipes/shopping_list.html', context)
 
 
 @login_required
