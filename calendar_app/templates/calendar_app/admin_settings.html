@@ -12,10 +12,27 @@
             <section class="card">
                 <header><h3>Manage Categories</h3></header>
                 <div style="padding: var(--space-4);">
-                    <ul id="category-list">
+                    <form method="post" action="{% url 'add_category' %}" class="mb-4">
+                        {% csrf_token %}
+                        <fieldset class="group">
+                            <input type="text" name="name" placeholder="Category name (e.g. Pasta)" required>
+                            <button type="submit">Add</button>
+                        </fieldset>
+                    </form>
+
+                    <ul id="category-list" style="list-style: none; padding: 0;">
                         {% for cat in categories %}
-                        <li>{{ cat.name }}</li>
+                        <li class="flex justify-between items-center py-2" style="border-bottom: 1px solid var(--border);">
+                            <span>{{ cat.name }}</span>
+                            <form method="post" action="{% url 'delete_category' pk=cat.pk %}" style="margin: 0;">
+                                {% csrf_token %}
+                                <button type="submit" class="ghost small" data-variant="danger" onclick="return confirm('Are you sure you want to remove this category?')">✕</button>
+                            </form>
+                        </li>
                         {% endfor %}
+                        {% if not categories %}
+                        <li class="text-light">No custom categories yet.</li>
+                        {% endif %}
                     </ul>
                 </div>
             </section>
@@ -24,11 +41,21 @@
             <section class="card">
                 <header><h3>Weekly Schedule Mapping</h3></header>
                 <div style="padding: var(--space-4);">
+                    <p class="text-light mb-4" style="font-size: 0.9em;">Define which food category you prefer for each day of the week.</p>
                     {% for day_val, day_name in days %}
-                    <div class="flex justify-between items-center mb-2">
-                        <span>{{ day_name }}</span>
-                        <span>{{ mappings|get_item:day_val }}</span>
-                    </div>
+                    <form method="post" action="{% url 'update_schedule' %}" class="flex justify-between items-center mb-3">
+                        {% csrf_token %}
+                        <input type="hidden" name="day" value="{{ day_val }}">
+                        <span style="font-weight: var(--font-medium);">{{ day_name }}</span>
+                        <div class="hstack gap-2">
+                            <select name="category" style="margin: 0; min-width: 150px;" onchange="this.form.submit()">
+                                <option value="">— Select Category —</option>
+                                {% for cat in categories %}
+                                <option value="{{ cat.pk }}" {% if mappings|get_item:day_val == cat.pk %}selected{% endif %}>{{ cat.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </form>
                     {% endfor %}
                 </div>
             </section>

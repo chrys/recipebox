@@ -7,6 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404, redirect, render
 
+from django.utils.text import slugify
+from django.views.decorators.http import require_POST
+
 from .forms import CalendarEntryForm
 from .models import CalendarEntry
 from recipes.models import Recipe, Category, UserScheduleMapping
@@ -24,6 +27,51 @@ def admin_settings(request):
         'days': UserScheduleMapping.DAYS_OF_WEEK,
     }
     return render(request, 'calendar_app/admin_settings.html', context)
+
+
+@login_required
+@require_POST
+def add_category(request):
+    name = request.POST.get('name', '').strip()
+    if name:
+        slug = slugify(name)
+        # Ensure slug is unique for this user
+        if not Category.objects.filter(user=request.user, slug=slug).exists():
+            Category.objects.create(user=request.user, name=name, slug=slug)
+            messages.success(request, f'Category "{name}" added.')
+        else:
+            messages.warning(request, f'Category with similar name already exists.')
+    return redirect('admin_settings')
+
+
+@login_required
+@require_POST
+def delete_category(request, pk):
+    category = get_object_or_404(Category, pk=pk, user=request.user)
+    category.delete()
+    messages.success(request, 'Category removed.')
+    return redirect('admin_settings')
+
+
+@login_required
+@require_POST
+def update_schedule(request):
+    day = request.POST.get('day')
+    category_id = request.POST.get('category')
+    
+    if day is not None:
+        category = None
+        if category_id:
+            category = get_object_or_404(Category, pk=category_id, user=request.user)
+        
+        UserScheduleMapping.objects.update_or_create(
+            user=request.user,
+            day_of_week=int(day),
+            defaults={'category': category}
+        )
+        messages.success(request, 'Schedule updated.')
+    
+    return redirect('admin_settings')
 
 
 @login_required

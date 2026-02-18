@@ -13,3 +13,9 @@ class CalendarUITest(TestCase):
         response = self.client.get(reverse('calendar_view'))
         self.assertContains(response, reverse('admin_settings'))
         self.assertContains(response, 'Admin Settings')
+
+    def test_admin_page_elements(self):
+        response = self.client.get(reverse('admin_settings'))
+        self.assertContains(response, 'action="%s"' % reverse('add_category'))
+        self.assertContains(response, 'action="%s"' % reverse('update_schedule'))
+        self.assertContains(response, '<select name="category"')
