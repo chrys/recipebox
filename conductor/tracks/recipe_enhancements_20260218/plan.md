@@ -20,7 +20,7 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Recipe Model & UI Enhancements' (Protocol in workflow.md) 13f33bc
 
 ## Phase 2: User-Specific Admin & Category Management
-- [ ] Task: Create Category & Schedule Mapping Models
+- [x] Task: Create Category & Schedule Mapping Models 8ce4407
     - [ ] Create `Tests/unit/calendar_app/test_models.py` and write tests for user-specific categories and schedule mapping.
     - [ ] Update `Category` model and create `UserScheduleMapping` in `recipes/models.py` or `calendar_app/models.py`.
     - [ ] Create and run migrations.
