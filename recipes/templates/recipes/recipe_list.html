@@ -37,6 +37,11 @@
                     {% endif %}
                     <header style="padding: var(--space-3);">
                         <h3 style="margin: 0;">{{ recipe.title }}</h3>
+                        <div class="recipe-rating" data-recipe-id="{{ recipe.pk }}" style="font-size: 1.1rem; cursor: pointer; color: var(--color-warning, #f59e0b); display: flex; gap: 1px; margin-top: var(--space-1);">
+                            {% for i in "12345"|make_list %}
+                            <span class="star" data-value="{{ i }}">{% if recipe.rating and recipe.rating >= i|add:0 %}★{% else %}☆{% endif %}</span>
+                            {% endfor %}
+                        </div>
                         {% if recipe.description %}
                         <p style="margin: var(--space-1) 0 0; font-size: 0.9rem;" class="text-light">
                             {{ recipe.description|truncatewords:15 }}

@@ -12,7 +12,14 @@
 
 <!-- Title & Meta -->
 <div class="flex justify-between items-center" style="flex-wrap: wrap; gap: var(--space-2);">
-    <h1>{{ recipe.title }}</h1>
+    <div>
+        <h1>{{ recipe.title }}</h1>
+        <div class="recipe-rating" data-recipe-id="{{ recipe.pk }}" style="font-size: 1.5rem; cursor: pointer; color: var(--color-warning, #f59e0b); display: flex; gap: 2px;">
+            {% for i in "12345"|make_list %}
+            <span class="star" data-value="{{ i }}">{% if recipe.rating and recipe.rating >= i|add:0 %}★{% else %}☆{% endif %}</span>
+            {% endfor %}
+        </div>
+    </div>
     <div class="hstack">
         <a href="{% url 'recipe_edit' pk=recipe.pk %}" class="button outline">Edit</a>
         <button commandfor="delete-dialog" command="show-modal" data-variant="danger" class="outline">Delete</button>

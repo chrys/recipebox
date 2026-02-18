@@ -85,4 +85,62 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // ---- CSRF Helper ----
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // ---- Star Rating Interaction ----
+    const ratingContainers = document.querySelectorAll('.recipe-rating');
+    ratingContainers.forEach(container => {
+        const recipeId = container.getAttribute('data-recipe-id');
+        const stars = container.querySelectorAll('.star');
+
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const rating = star.getAttribute('data-value');
+                fetch(`/recipes/${recipeId}/rate/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ rating: rating })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'ok') {
+                        // Update stars UI
+                        const currentRating = data.rating;
+                        stars.forEach(s => {
+                            const val = parseInt(s.getAttribute('data-value'));
+                            s.textContent = val <= currentRating ? '★' : '☆';
+                        });
+                        if (typeof ot !== 'undefined') {
+                            ot.toast('Rating updated!', '', { variant: 'success' });
+                        }
+                    } else {
+                        if (typeof ot !== 'undefined' && data.error) {
+                            ot.toast(data.error, '', { variant: 'danger' });
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.error('Error updating rating:', err);
+                });
+            });
+        });
+    });
 });

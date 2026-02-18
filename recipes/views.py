@@ -1,12 +1,34 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
+from django.http import JsonResponse, HttpResponseBadRequest
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
+from django.views.decorators.http import require_POST
 from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, DeleteView,
 )
+import json
 from .models import Recipe, Category
 from .forms import RecipeForm, RecipeIngredientFormSet
+
+
+@login_required
+@require_POST
+def update_rating(request, pk):
+    recipe = get_object_or_404(Recipe, pk=pk)
+    try:
+        data = json.loads(request.body)
+        rating = int(data.get('rating'))
+        if 1 <= rating <= 5:
+            recipe.rating = rating
+            recipe.save(update_fields=['rating'])
+            return JsonResponse({'status': 'ok', 'rating': recipe.rating})
+        else:
+            return JsonResponse({'error': 'Invalid rating'}, status=400)
+    except (ValueError, TypeError, json.JSONDecodeError):
+        return JsonResponse({'error': 'Invalid data'}, status=400)
 
 
 class RecipeOwnerMixin(UserPassesTestMixin):
