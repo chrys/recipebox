@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load core_tags %}
+
+{% block title %}Admin Settings — RecipeBox{% endblock %}
+
+{% block content %}
+<h1>Admin Settings</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <section class="card">
+                <header><h3>Manage Categories</h3></header>
+                <div style="padding: var(--space-4);">
+                    <ul id="category-list">
+                        {% for cat in categories %}
+                        <li>{{ cat.name }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </section>
+        </div>
+        <div class="col-6">
+            <section class="card">
+                <header><h3>Weekly Schedule Mapping</h3></header>
+                <div style="padding: var(--space-4);">
+                    {% for day_val, day_name in days %}
+                    <div class="flex justify-between items-center mb-2">
+                        <span>{{ day_name }}</span>
+                        <span>{{ mappings|get_item:day_val }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}

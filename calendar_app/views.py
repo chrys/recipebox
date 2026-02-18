@@ -9,7 +9,21 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import CalendarEntryForm
 from .models import CalendarEntry
-from recipes.models import Recipe
+from recipes.models import Recipe, Category, UserScheduleMapping
+
+
+@login_required
+def admin_settings(request):
+    """Manage custom categories and weekly schedule mapping."""
+    categories = Category.objects.filter(user=request.user)
+    mappings = {m.day_of_week: m.category_id for m in UserScheduleMapping.objects.filter(user=request.user)}
+    
+    context = {
+        'categories': categories,
+        'mappings': mappings,
+        'days': UserScheduleMapping.DAYS_OF_WEEK,
+    }
+    return render(request, 'calendar_app/admin_settings.html', context)
 
 
 @login_required
