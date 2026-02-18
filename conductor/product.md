@@ -12,11 +12,13 @@ To provide home cooks with an intuitive and efficient platform for organizing th
 ## Goals & Objectives
 - **Meal Planning:** Empower users to take control of their weekly or monthly schedules through a structured planning interface.
 - **Operational Efficiency:** Minimize the overhead and time consumption associated with meal preparation and manual shopping list creation.
+- **Personalization:** Allow users to tailor the application to their specific dietary preferences and kitchen workflows.
 
 ## Core Features
 - **Digital Recipe Collection:** A robust management system for creating, updating, and categorizing recipes with support for tags and media.
 - **Interactive Meal Calendar:** A visual dashboard for scheduling recipes to specific dates and meal times (Breakfast, Lunch, Dinner).
 - **Smart Shopping List:** Automated generation of consolidated grocery lists derived directly from the planned meal calendar.
+- **Admin Settings:** User-specific controls for managing food categories and defining weekly scheduling preferences.
 
 ## Success Metrics
 - **Operational Efficiency:** Success is measured by the significant reduction in time users spend on the administrative tasks of planning and shopping.
