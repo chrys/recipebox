@@ -54,7 +54,7 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 4: Shopping List Module' (Protocol in workflow.md) b15d10f
 
 ## Phase 5: Seed Data & Final Polish
-- [ ] Task: Seed 25 Public Recipes
+- [x] Task: Seed 25 Public Recipes b781a13
     - [ ] Create a management command to populate the database with the required seed recipes, categories, and images.
 - [ ] Task: Final Mobile & Accessibility Audit
     - [ ] Perform a full walkthrough on mobile sizes and verify ARIA compliance for new interactive elements.
