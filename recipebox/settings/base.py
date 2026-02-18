@@ -92,6 +92,7 @@ USE_TZ = True
 # Static files
 # ---------------------------------------------------------------------------
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'   # overridden in production.py
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # ---------------------------------------------------------------------------
@@ -103,9 +104,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # ---------------------------------------------------------------------------
 # Auth redirects
 # ---------------------------------------------------------------------------
-LOGIN_URL = '/accounts/login/'
+LOGIN_URL = '/recipes/accounts/login/'
 LOGIN_REDIRECT_URL = '/recipes/'
-LOGOUT_REDIRECT_URL = '/accounts/login/'
+LOGOUT_REDIRECT_URL = '/recipes/accounts/login/'
 
 # ---------------------------------------------------------------------------
 # Default PK

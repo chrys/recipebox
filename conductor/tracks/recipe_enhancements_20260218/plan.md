@@ -1,0 +1,61 @@
+# Implementation Plan: Recipe Enhancements, Admin Settings & Smart Shopping
+
+## Phase 1: Recipe Model & UI Enhancements
+- [ ] Task: Update Recipe & Ingredient Models
+    - [ ] Create `Tests/unit/recipes/test_models.py` and write failing tests for new fields.
+    - [ ] Add `rating` (Integer 1-5) to `Recipe` in `recipes/models.py`.
+    - [ ] Add `aisle` (CharField) to `RecipeIngredient` in `recipes/models.py`.
+    - [ ] Create and run migrations.
+- [ ] Task: Mark Mandatory Fields in UI
+    - [ ] Update `recipes/templates/recipes/recipe_form.html` to visually mark mandatory fields.
+    - [ ] Add styling for validation error messages using Oat UI classes.
+- [ ] Task: Implement Interactive Star Rating (AJAX)
+    - [ ] Create `Tests/unit/recipes/test_rating_view.py` and write failing tests for the rating update logic.
+    - [ ] Implement `update_rating` view in `recipes/views.py`.
+    - [ ] Create Vanilla JS logic in `static/js/app.js` for AJAX rating submission.
+    - [ ] Update `recipes/templates/recipes/recipe_detail.html` to include the star rating component.
+- [ ] Task: Update Recipe Form for Aisle Entry
+    - [ ] Create `Tests/unit/recipes/test_forms.py` and write tests for aisle field in ingredient formset.
+    - [ ] Update `RecipeIngredient` formset in `recipes/forms.py` to include `aisle`.
+- [ ] Task: Conductor - User Manual Verification 'Phase 1: Recipe Model & UI Enhancements' (Protocol in workflow.md)
+
+## Phase 2: User-Specific Admin & Category Management
+- [ ] Task: Create Category & Schedule Mapping Models
+    - [ ] Create `Tests/unit/calendar_app/test_models.py` and write tests for user-specific categories and schedule mapping.
+    - [ ] Update `Category` model and create `UserScheduleMapping` in `recipes/models.py` or `calendar_app/models.py`.
+    - [ ] Create and run migrations.
+- [ ] Task: Implement Admin View & Navigation
+    - [ ] Create `Tests/unit/calendar_app/test_admin_views.py` and write tests for the Admin settings page access and logic.
+    - [ ] Implement `admin_settings` view in `calendar_app/views.py`.
+    - [ ] Update `calendar_app/urls.py` and `templates/base.html` for navigation.
+- [ ] Task: Category Management & Schedule Mapping UI
+    - [ ] Implement the UI for adding/removing categories and defining the weekly schedule in the Admin page.
+- [ ] Task: Conductor - User Manual Verification 'Phase 2: User-Specific Admin & Category Management' (Protocol in workflow.md)
+
+## Phase 3: Smart Calendar Scheduling
+- [ ] Task: Implement "Schedule Current Week" Logic
+    - [ ] Create `Tests/unit/calendar_app/test_scheduling.py` and write tests for the auto-scheduling algorithm.
+    - [ ] Implement `schedule_current_week` view and logic.
+- [ ] Task: "Schedule Current Week" UI
+    - [ ] Add the button to the calendar and implement JS for conditional enabling (empty week check).
+- [ ] Task: Implement "Replace Recipe" Logic
+    - [ ] Create `Tests/unit/calendar_app/test_replace_logic.py` and write tests for replacing a recipe with another from the same category.
+    - [ ] Implement `replace_calendar_recipe` AJAX view.
+- [ ] Task: "Replace Recipe" UI
+    - [ ] Update calendar context menu and implement JS for AJAX replacement.
+- [ ] Task: Conductor - User Manual Verification 'Phase 3: Smart Calendar Scheduling' (Protocol in workflow.md)
+
+## Phase 4: Shopping List Module
+- [ ] Task: Implement Shopping List Logic
+    - [ ] Create `Tests/unit/recipes/test_shopping_list.py` and write tests for ingredient aggregation and aisle grouping.
+    - [ ] Implement the shopping list aggregation logic.
+- [ ] Task: Shopping List UI
+    - [ ] Create the shopping list page and template grouped by aisle.
+- [ ] Task: Conductor - User Manual Verification 'Phase 4: Shopping List Module' (Protocol in workflow.md)
+
+## Phase 5: Seed Data & Final Polish
+- [ ] Task: Seed 25 Public Recipes
+    - [ ] Create a management command to populate the database with the required seed recipes, categories, and images.
+- [ ] Task: Final Mobile & Accessibility Audit
+    - [ ] Perform a full walkthrough on mobile sizes and verify ARIA compliance for new interactive elements.
+- [ ] Task: Conductor - User Manual Verification 'Phase 5: Seed Data & Final Polish' (Protocol in workflow.md)
