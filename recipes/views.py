@@ -62,10 +62,13 @@ def shopping_list(request):
     # { aisle: [ {name, value, unit, recipes}, ... ] }
     ingredients_by_aisle = defaultdict(list)
     for (aisle, name, unit), value in consolidated.items():
+        from .utils import format_quantity
+        display_val, display_unit = format_quantity(value, unit)
+        
         ingredients_by_aisle[aisle].append({
             'name': name,
-            'value': value if value > 0 else None,
-            'unit': unit,
+            'value': display_val if display_val and display_val > 0 else None,
+            'unit': display_unit,
             'recipes': ", ".join(sorted(ingredient_recipes[(aisle, name, unit)]))
         })
             
