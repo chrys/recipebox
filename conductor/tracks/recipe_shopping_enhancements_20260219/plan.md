@@ -26,7 +26,7 @@ Ensuring a consistent alphabetical order for categories across the application.
 ## Phase 3: Smart Shopping List Logic
 Implementing the conversion and consolidation engine for the shopping list.
 
-- [ ] Task: Implement Unit Conversion Utility
+- [x] Task: Implement Unit Conversion Utility (021dfee)
     - [ ] Create a utility function to normalize units (e.g., convert everything to grams/pieces/base units for calculation)
     - [ ] Implement the specific rule: `1 cup = 250 grams`
     - [ ] Task: Conductor - User Manual Verification 'Unit Conversion' (Protocol in workflow.md)
