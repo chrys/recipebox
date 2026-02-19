@@ -3,7 +3,7 @@
 ## Phase 1: Recipe Model and Form Updates
 This phase focuses on structural changes to how ingredient quantities are stored and captured.
 
-- [ ] Task: Update `RecipeIngredient` model to split quantity into `quantity_value` and `quantity_unit`
+- [x] Task: Update `RecipeIngredient` model to split quantity into `quantity_value` and `quantity_unit` (82a464a)
     - [ ] Add `quantity_value` (DecimalField) and `quantity_unit` (CharField with choices) to `RecipeIngredient` in `recipes/models.py`
     - [ ] Create and run migrations
     - [ ] Task: Conductor - User Manual Verification 'Model Update' (Protocol in workflow.md)
