@@ -86,29 +86,49 @@
         <!-- Ingredients -->
         <h3 style="margin-top: var(--space-4);">Ingredients</h3>
         {{ formset.management_form }}
+        
+        {% if formset.non_form_errors %}
+        <div role="alert" data-variant="error" style="margin-bottom: var(--space-3);">
+            {{ formset.non_form_errors }}
+        </div>
+        {% endif %}
+
         <div id="ingredient-formset">
             {% for ing_form in formset %}
             <div class="ingredient-row" {% if ing_form.DELETE.value %}style="display:none;" {% endif %}>
                 <input type="hidden" name="{{ ing_form.order.html_name }}" value="{{ forloop.counter0 }}">
                 {{ ing_form.id }}
                 
-                <div style="display: flex; gap: 4px; flex: 1.5;">
-                    <input type="number" name="{{ ing_form.quantity_value.html_name }}"
-                        value="{{ ing_form.quantity_value.value|default_if_none:'' }}" placeholder="Qty"
-                        step="0.01" style="flex: 1;">
-                    <select name="{{ ing_form.quantity_unit.html_name }}" style="flex: 1.2;">
-                        <option value="">-- Unit --</option>
-                        {% for val, label in ing_form.fields.quantity_unit.choices %}
-                            {% if val %}
-                                <option value="{{ val }}" {% if ing_form.quantity_unit.value == val %}selected{% endif %}>{{ label }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
+                <div style="display: flex; gap: 4px; flex: 1.5; flex-direction: column;">
+                    <div style="display: flex; gap: 4px;">
+                        <input type="number" name="{{ ing_form.quantity_value.html_name }}"
+                            value="{{ ing_form.quantity_value.value|default_if_none:'' }}" placeholder="Qty"
+                            step="0.01" style="flex: 1;">
+                        <select name="{{ ing_form.quantity_unit.html_name }}" style="flex: 1.2;">
+                            <option value="">-- Unit --</option>
+                            {% for val, label in ing_form.fields.quantity_unit.choices %}
+                                {% if val %}
+                                    <option value="{{ val }}" {% if ing_form.quantity_unit.value == val %}selected{% endif %}>{{ label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% if ing_form.quantity_value.errors or ing_form.quantity_unit.errors %}
+                        <div class="error" role="status" style="font-size: 0.8em; color: var(--color-danger);">
+                            {{ ing_form.quantity_value.errors.0 }} {{ ing_form.quantity_unit.errors.0 }}
+                        </div>
+                    {% endif %}
                 </div>
 
-                <input type="text" name="{{ ing_form.name.html_name }}"
-                    value="{{ ing_form.name.value|default_if_none:'' }}" placeholder="Ingredient name *"
-                    style="flex: 2;">
+                <div style="display: flex; flex-direction: column; flex: 2;">
+                    <input type="text" name="{{ ing_form.name.html_name }}"
+                        value="{{ ing_form.name.value|default_if_none:'' }}" placeholder="Ingredient name *">
+                    {% if ing_form.name.errors %}
+                        <div class="error" role="status" style="font-size: 0.8em; color: var(--color-danger);">
+                            {{ ing_form.name.errors.0 }}
+                        </div>
+                    {% endif %}
+                </div>
                 
                 <input type="text" name="{{ ing_form.aisle.html_name }}"
                     value="{{ ing_form.aisle.value|default_if_none:'' }}" placeholder="Aisle"

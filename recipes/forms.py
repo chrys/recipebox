@@ -34,18 +34,39 @@ class RecipeForm(forms.ModelForm):
         }
 
 
+class RecipeIngredientForm(forms.ModelForm):
+    class Meta:
+        model = RecipeIngredient
+        fields = ('name', 'quantity_value', 'quantity_unit', 'quantity', 'aisle', 'order')
+        widgets = {
+            'name': forms.TextInput(attrs={'placeholder': 'Ingredient name *'}),
+            'quantity_value': forms.NumberInput(attrs={'placeholder': 'Val', 'step': '0.01'}),
+            'quantity_unit': forms.Select(),
+            'quantity': forms.TextInput(attrs={'placeholder': 'Notes (e.g. "a pinch")'}),
+            'aisle': forms.TextInput(attrs={'placeholder': 'Aisle'}),
+            'order': forms.HiddenInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Make name optional in the form so the formset can ignore empty rows
+        self.fields['name'].required = False
+
+    def clean(self):
+        cleaned_data = super().clean()
+        name = cleaned_data.get('name')
+        # If any of these are filled, then name MUST be provided
+        val = cleaned_data.get('quantity_value')
+        unit = cleaned_data.get('quantity_unit')
+        
+        if (val or unit) and not name:
+            self.add_error('name', 'This field is required if quantity is provided.')
+        return cleaned_data
+
 RecipeIngredientFormSet = inlineformset_factory(
     Recipe,
     RecipeIngredient,
-    fields=('name', 'quantity_value', 'quantity_unit', 'quantity', 'aisle', 'order'),
+    form=RecipeIngredientForm,
     extra=3,
     can_delete=True,
-    widgets={
-        'name': forms.TextInput(attrs={'placeholder': 'Ingredient'}),
-        'quantity_value': forms.NumberInput(attrs={'placeholder': 'Val', 'step': '0.01'}),
-        'quantity_unit': forms.Select(),
-        'quantity': forms.TextInput(attrs={'placeholder': 'Quantity (optional string)'}),
-        'aisle': forms.TextInput(attrs={'placeholder': 'Aisle'}),
-        'order': forms.HiddenInput(),
-    },
 )

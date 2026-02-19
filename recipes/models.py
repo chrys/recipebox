@@ -119,6 +119,7 @@ class Recipe(models.Model):
 
 class RecipeIngredient(models.Model):
     UNIT_CHOICES = [
+        ('', '-- Unit --'),
         ('grams', 'grams'),
         ('kilograms', 'kilograms'),
         ('cups', 'cups'),
