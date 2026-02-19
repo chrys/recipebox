@@ -28,6 +28,7 @@ class RecipeIngredientFormSetTest(TestCase):
             'ingredients-MAX_NUM_FORMS': '1000',
             'ingredients-0-quantity': '1 cup',
             'ingredients-0-name': '', # Required
+            'ingredients-0-order': '0',
         }
         formset = RecipeIngredientFormSet(data=data)
         self.assertFalse(formset.is_valid())

@@ -58,8 +58,9 @@ class RecipeIngredientForm(forms.ModelForm):
         # If any of these are filled, then name MUST be provided
         val = cleaned_data.get('quantity_value')
         unit = cleaned_data.get('quantity_unit')
+        legacy_qty = cleaned_data.get('quantity')
         
-        if (val or unit) and not name:
+        if (val or unit or legacy_qty) and not name:
             self.add_error('name', 'This field is required if quantity is provided.')
         return cleaned_data
 
