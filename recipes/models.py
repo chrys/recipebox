@@ -118,6 +118,15 @@ class Recipe(models.Model):
 
 
 class RecipeIngredient(models.Model):
+    UNIT_CHOICES = [
+        ('grams', 'grams'),
+        ('kilograms', 'kilograms'),
+        ('cups', 'cups'),
+        ('tsp', 'tsp'),
+        ('tbsp', 'tbsp'),
+        ('piece', 'piece'),
+    ]
+
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
@@ -128,6 +137,16 @@ class RecipeIngredient(models.Model):
         max_length=50,
         blank=True, default='',
         help_text='e.g. "2 cups", "a pinch"',
+    )
+    quantity_value = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True, blank=True,
+    )
+    quantity_unit = models.CharField(
+        max_length=20,
+        choices=UNIT_CHOICES,
+        blank=True, default='',
     )
     aisle = models.CharField(
         max_length=100,
@@ -140,6 +159,8 @@ class RecipeIngredient(models.Model):
         ordering = ['order']
 
     def __str__(self):
+        if self.quantity_value and self.quantity_unit:
+            return f'{self.quantity_value} {self.quantity_unit} {self.name}'
         if self.quantity:
             return f'{self.quantity} {self.name}'
         return self.name
