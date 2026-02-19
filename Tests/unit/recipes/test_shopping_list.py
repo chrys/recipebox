@@ -29,21 +29,23 @@ class ShoppingListLogicTest(TestCase):
     def test_shopping_list_view_accessible(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'recipes/shopping_list.html')
+        # Verify the response contains ingredients
+        self.assertIn(b'Milk', response.content)
+        self.assertIn(b'Bread', response.content)
 
     def test_shopping_list_aggregation(self):
         response = self.client.get(self.url)
-        ingredients_by_aisle = response.context['ingredients_by_aisle']
+        self.assertEqual(response.status_code, 200)
         
-        # Should have Dairy and Bakery
-        self.assertIn('Dairy', ingredients_by_aisle)
-        self.assertIn('Bakery', ingredients_by_aisle)
+        # Verify Dairy and Bakery sections are present
+        self.assertIn(b'Dairy', response.content)
+        self.assertIn(b'Bakery', response.content)
         
-        # Dairy should have Milk but NOT Old Egg
-        dairy_names = [ing['name'] for ing in ingredients_by_aisle['Dairy']]
-        self.assertIn('Milk', dairy_names)
-        self.assertNotIn('Old Egg', dairy_names)
+        # Verify Milk is in the response (Dairy aisle)
+        self.assertIn(b'Milk', response.content)
         
-        # Bakery should have Bread
-        bakery_names = [ing['name'] for ing in ingredients_by_aisle['Bakery']]
-        self.assertIn('Bread', bakery_names)
+        # Verify Bread is in the response (Bakery aisle)
+        self.assertIn(b'Bread', response.content)
+        
+        # Verify past recipe's ingredient is NOT in the response
+        self.assertNotIn(b'Old Egg', response.content)

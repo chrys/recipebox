@@ -2,6 +2,7 @@ REMOTE_USER="chrys"
 REMOTE_HOST="myVPS3"
 FILES=(
 	    "/etc/nginx/sites-enabled/fasolaki.com"
+		"/etc/systemd/system/recipes.service"
 	)
 	
 # === SCP Operation Loop ===

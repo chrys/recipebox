@@ -19,4 +19,5 @@ class RecipeAdmin(admin.ModelAdmin):
     list_display = ('title', 'user', 'public', 'prep_time', 'cook_time', 'created_at')
     list_filter = ('categories', 'public', 'created_at')
     search_fields = ('title', 'description')
+    filter_horizontal = ('categories',)
     inlines = [RecipeIngredientInline]

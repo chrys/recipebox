@@ -6,8 +6,8 @@ After=network.target postgresql.service
 [Service]
 Type=notify
 
-# The user that owns /srv/recipes — change if different
-User=www-data
+# The user/group that owns /srv/recipes (matches your standard pattern)
+User=deploy
 Group=www-data
 
 WorkingDirectory=/srv/recipes
