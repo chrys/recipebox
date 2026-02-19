@@ -34,7 +34,7 @@ Implementing the conversion and consolidation engine for the shopping list.
     - [ ] Update the shopping list generation logic to group by ingredient name
     - [ ] Sum the normalized quantities
     - [ ] Task: Conductor - User Manual Verification 'Ingredient Consolidation' (Protocol in workflow.md)
-- [ ] Task: Implement "Readable" Unit Display
+- [x] Task: Implement "Readable" Unit Display (aacfb3d)
     - [ ] Create a utility to format the consolidated totals (e.g., 1250g -> 1.25kg)
     - [ ] Update the shopping list template to use this formatter
     - [ ] Task: Conductor - User Manual Verification 'Readable Display' (Protocol in workflow.md)
