@@ -9,5 +9,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: Recipe and Shopping List Enhancements**
+- [x] **Track: Recipe and Shopping List Enhancements**
 *Link: [./tracks/recipe_shopping_enhancements_20260219/](./tracks/recipe_shopping_enhancements_20260219/)*
