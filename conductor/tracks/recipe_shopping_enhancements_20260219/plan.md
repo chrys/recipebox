@@ -54,3 +54,6 @@ Refining the recipe detail page layout for better readability on desktop.
     - [x] Implement two-column layout using responsive grid
     - [x] Update ingredient display to use new quantity fields
     - [x] Task: Conductor - User Manual Verification 'Side-by-Side View' (Protocol in workflow.md)
+
+## Phase: Review Fixes
+- [x] Task: Apply review suggestions (686336b)
