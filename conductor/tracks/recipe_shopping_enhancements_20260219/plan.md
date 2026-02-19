@@ -7,7 +7,7 @@ This phase focuses on structural changes to how ingredient quantities are stored
     - [ ] Add `quantity_value` (DecimalField) and `quantity_unit` (CharField with choices) to `RecipeIngredient` in `recipes/models.py`
     - [ ] Create and run migrations
     - [ ] Task: Conductor - User Manual Verification 'Model Update' (Protocol in workflow.md)
-- [ ] Task: Update Recipe Forms and Templates
+- [x] Task: Update Recipe Forms and Templates (984cefa)
     - [ ] Update `RecipeIngredientForm` in `recipes/forms.py` to include the two new fields
     - [ ] Update recipe create/edit templates to display the new fields side-by-side
     - [ ] Task: Conductor - User Manual Verification 'Form Update' (Protocol in workflow.md)
