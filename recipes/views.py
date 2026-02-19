@@ -172,10 +172,6 @@ class RecipeCreateView(LoginRequiredMixin, CreateView):
             messages.success(self.request, f'Recipe "{self.object.title}" created!')
             return super().form_valid(form)
         else:
-            print("DEBUG: Formset is invalid")
-            print(f"DEBUG: Formset errors: {formset.errors}")
-            print(f"DEBUG: Formset non_form_errors: {formset.non_form_errors()}")
-            print(f"DEBUG: Main form errors: {form.errors}")
             return self.render_to_response(self.get_context_data(form=form))
 
 
