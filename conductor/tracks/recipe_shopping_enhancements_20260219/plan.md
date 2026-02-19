@@ -11,7 +11,7 @@ This phase focuses on structural changes to how ingredient quantities are stored
     - [ ] Update `RecipeIngredientForm` in `recipes/forms.py` to include the two new fields
     - [ ] Update recipe create/edit templates to display the new fields side-by-side
     - [ ] Task: Conductor - User Manual Verification 'Form Update' (Protocol in workflow.md)
-- [ ] Task: Migrate Existing Data
+- [x] Task: Migrate Existing Data (b934b8c)
     - [ ] Write a management command or migration script to parse existing string quantities into the new fields where possible
     - [ ] Task: Conductor - User Manual Verification 'Data Migration' (Protocol in workflow.md)
 
