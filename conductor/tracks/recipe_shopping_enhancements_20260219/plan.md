@@ -39,9 +39,18 @@ Implementing the conversion and consolidation engine for the shopping list.
     - [x] Update the shopping list template to use this formatter
     - [x] Task: Conductor - User Manual Verification 'Readable Display' (Protocol in workflow.md)
 
-## Phase 4: Final Integration and Verification
+## Phase 4: Final Integration and Verification [checkpoint: f86df3f]
 Comprehensive testing of the entire flow.
 
 - [x] Task: End-to-End Verification (ef9f243)
-    - [ ] Verify full flow: Create recipe -> Plan meal -> View consolidated shopping list
-    - [ ] Task: Conductor - User Manual Verification 'Final Integration' (Protocol in workflow.md)
+    - [x] Verify full flow: Create recipe -> Plan meal -> View consolidated shopping list
+    - [x] Task: Conductor - User Manual Verification 'Final Integration' (Protocol in workflow.md)
+
+## Phase 5: UI Refinement - Side-by-Side Detail View
+Refining the recipe detail page layout for better readability on desktop.
+
+- [x] Task: Implement Side-by-Side Ingredients and Instructions (8eaaae2)
+    - [x] Remove `ot-tabs` from `recipe_detail.html`
+    - [x] Implement two-column layout using responsive grid
+    - [x] Update ingredient display to use new quantity fields
+    - [x] Task: Conductor - User Manual Verification 'Side-by-Side View' (Protocol in workflow.md)
