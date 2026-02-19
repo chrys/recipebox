@@ -41,39 +41,49 @@
     {% if recipe.servings %}<span>🍽️ {{ recipe.servings }} servings</span>{% endif %}
 </div>
 
-<!-- Tabbed Content -->
-<ot-tabs>
-    <div role="tablist">
-        <button role="tab">Ingredients</button>
-        <button role="tab">Instructions</button>
-    </div>
+<!-- Side-by-Side Content -->
+<div class="container" style="margin-top: var(--space-4);">
+    <div class="row" style="gap: var(--space-6) 0;">
+        <!-- Ingredients -->
+        <div class="col-4">
+            <section>
+                <h3>Ingredients</h3>
+                {% if recipe.ingredients.all %}
+                <ul style="padding-left: var(--space-4);">
+                    {% for ing in recipe.ingredients.all %}
+                    <li style="margin-bottom: var(--space-2);">
+                        {% if ing.quantity_value %}
+                            <strong>{{ ing.quantity_value }} {{ ing.quantity_unit }}</strong>
+                        {% elif ing.quantity %}
+                            <strong>{{ ing.quantity }}</strong>
+                        {% endif %}
+                        {{ ing.name }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-light">No ingredients listed.</p>
+                {% endif %}
+            </section>
+        </div>
 
-    <div role="tabpanel">
-        {% if recipe.ingredients.all %}
-        <ul>
-            {% for ing in recipe.ingredients.all %}
-            <li>
-                {% if ing.quantity %}<strong>{{ ing.quantity }}</strong> {% endif %}{{ ing.name }}
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p class="text-light">No ingredients listed.</p>
-        {% endif %}
+        <!-- Instructions -->
+        <div class="col-8">
+            <section>
+                <h3>Instructions</h3>
+                {% if recipe.instruction_steps %}
+                <ol style="padding-left: var(--space-4);">
+                    {% for step in recipe.instruction_steps %}
+                    <li style="margin-bottom: var(--space-3); line-height: 1.6;">{{ step }}</li>
+                    {% endfor %}
+                </ol>
+                {% else %}
+                <p class="text-light">No instructions yet.</p>
+                {% endif %}
+            </section>
+        </div>
     </div>
-
-    <div role="tabpanel">
-        {% if recipe.instruction_steps %}
-        <ol>
-            {% for step in recipe.instruction_steps %}
-            <li>{{ step }}</li>
-            {% endfor %}
-        </ol>
-        {% else %}
-        <p class="text-light">No instructions yet.</p>
-        {% endif %}
-    </div>
-</ot-tabs>
+</div>
 
 <!-- Delete Confirmation Dialog -->
 <dialog id="delete-dialog" closedby="any">
