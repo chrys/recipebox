@@ -19,7 +19,7 @@ from recipes.models import Recipe, Category, UserScheduleMapping
 @login_required
 def admin_settings(request):
     """Manage custom categories and weekly schedule mapping."""
-    categories = Category.objects.filter(user=request.user)
+    categories = Category.objects.filter(user=request.user).order_by('name')
     mappings = {m.day_of_week: m.category_id for m in UserScheduleMapping.objects.filter(user=request.user)}
     
     context = {
