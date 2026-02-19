@@ -18,7 +18,7 @@ This phase focuses on structural changes to how ingredient quantities are stored
 ## Phase 2: Category Sorting
 Ensuring a consistent alphabetical order for categories across the application.
 
-- [ ] Task: Implement Alphabetical Sorting for Categories
+- [x] Task: Implement Alphabetical Sorting for Categories (929c928)
     - [ ] Update `Category` model's default ordering in `recipes/models.py`
     - [ ] Ensure forms and views respect this ordering
     - [ ] Task: Conductor - User Manual Verification 'Category Sorting' (Protocol in workflow.md)
