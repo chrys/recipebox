@@ -37,12 +37,14 @@ class RecipeForm(forms.ModelForm):
 RecipeIngredientFormSet = inlineformset_factory(
     Recipe,
     RecipeIngredient,
-    fields=('name', 'quantity', 'aisle', 'order'),
+    fields=('name', 'quantity_value', 'quantity_unit', 'quantity', 'aisle', 'order'),
     extra=3,
     can_delete=True,
     widgets={
         'name': forms.TextInput(attrs={'placeholder': 'Ingredient'}),
-        'quantity': forms.TextInput(attrs={'placeholder': 'Quantity'}),
+        'quantity_value': forms.NumberInput(attrs={'placeholder': 'Val', 'step': '0.01'}),
+        'quantity_unit': forms.Select(),
+        'quantity': forms.TextInput(attrs={'placeholder': 'Quantity (optional string)'}),
         'aisle': forms.TextInput(attrs={'placeholder': 'Aisle'}),
         'order': forms.HiddenInput(),
     },

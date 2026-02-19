@@ -91,14 +91,33 @@
             <div class="ingredient-row" {% if ing_form.DELETE.value %}style="display:none;" {% endif %}>
                 <input type="hidden" name="{{ ing_form.order.html_name }}" value="{{ forloop.counter0 }}">
                 {{ ing_form.id }}
-                <input type="text" name="{{ ing_form.quantity.html_name }}"
-                    value="{{ ing_form.quantity.value|default_if_none:'' }}" placeholder="Quantity"
-                    style="max-width: 120px;">
+                
+                <div style="display: flex; gap: 4px; flex: 1.5;">
+                    <input type="number" name="{{ ing_form.quantity_value.html_name }}"
+                        value="{{ ing_form.quantity_value.value|default_if_none:'' }}" placeholder="Qty"
+                        step="0.01" style="flex: 1;">
+                    <select name="{{ ing_form.quantity_unit.html_name }}" style="flex: 1.2;">
+                        <option value="">-- Unit --</option>
+                        {% for val, label in ing_form.fields.quantity_unit.choices %}
+                            {% if val %}
+                                <option value="{{ val }}" {% if ing_form.quantity_unit.value == val %}selected{% endif %}>{{ label }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+
                 <input type="text" name="{{ ing_form.name.html_name }}"
-                    value="{{ ing_form.name.value|default_if_none:'' }}" placeholder="Ingredient name *">
+                    value="{{ ing_form.name.value|default_if_none:'' }}" placeholder="Ingredient name *"
+                    style="flex: 2;">
+                
                 <input type="text" name="{{ ing_form.aisle.html_name }}"
                     value="{{ ing_form.aisle.value|default_if_none:'' }}" placeholder="Aisle"
-                    style="max-width: 150px;">
+                    style="flex: 1; max-width: 120px;">
+
+                <input type="text" name="{{ ing_form.quantity.html_name }}"
+                    value="{{ ing_form.quantity.value|default_if_none:'' }}" placeholder="Notes (e.g. 'a pinch')"
+                    style="flex: 1; max-width: 150px;">
+
                 {% if ing_form.DELETE %}
                 <input type="hidden" name="{{ ing_form.DELETE.html_name }}"
                     value="{{ ing_form.DELETE.value|default_if_none:'' }}">
@@ -112,9 +131,23 @@
         <template id="empty-ingredient-form">
             <input type="hidden" name="ingredients-__prefix__-order" value="0">
             <input type="hidden" name="ingredients-__prefix__-id" value="">
-            <input type="text" name="ingredients-__prefix__-quantity" placeholder="Quantity" style="max-width: 120px;">
-            <input type="text" name="ingredients-__prefix__-name" placeholder="Ingredient name *">
-            <input type="text" name="ingredients-__prefix__-aisle" placeholder="Aisle" style="max-width: 150px;">
+            
+            <div style="display: flex; gap: 4px; flex: 1.5;">
+                <input type="number" name="ingredients-__prefix__-quantity_value" placeholder="Qty" step="0.01" style="flex: 1;">
+                <select name="ingredients-__prefix__-quantity_unit" style="flex: 1.2;">
+                    <option value="">-- Unit --</option>
+                    {% for val, label in formset.empty_form.fields.quantity_unit.choices %}
+                        {% if val %}
+                            <option value="{{ val }}">{{ label }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <input type="text" name="ingredients-__prefix__-name" placeholder="Ingredient name *" style="flex: 2;">
+            <input type="text" name="ingredients-__prefix__-aisle" placeholder="Aisle" style="flex: 1; max-width: 120px;">
+            <input type="text" name="ingredients-__prefix__-quantity" placeholder="Notes (e.g. 'a pinch')" style="flex: 1; max-width: 150px;">
+            
             <button type="button" class="remove-ingredient outline small" data-variant="danger">✕</button>
         </template>
 
