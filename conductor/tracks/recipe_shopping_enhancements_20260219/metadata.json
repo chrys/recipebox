@@ -1,8 +1,0 @@
-{
-  "track_id": "recipe_shopping_enhancements_20260219",
-  "type": "feature",
-  "status": "new",
-  "created_at": "2026-02-19T10:00:00Z",
-  "updated_at": "2026-02-19T10:00:00Z",
-  "description": "Split quantity fields, sort categories alphabetically, and implement smart shopping list consolidation with unit conversion."
-}
