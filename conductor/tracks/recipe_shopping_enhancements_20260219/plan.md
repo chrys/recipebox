@@ -30,7 +30,7 @@ Implementing the conversion and consolidation engine for the shopping list.
     - [ ] Create a utility function to normalize units (e.g., convert everything to grams/pieces/base units for calculation)
     - [ ] Implement the specific rule: `1 cup = 250 grams`
     - [ ] Task: Conductor - User Manual Verification 'Unit Conversion' (Protocol in workflow.md)
-- [ ] Task: Implement Ingredient Consolidation Logic
+- [x] Task: Implement Ingredient Consolidation Logic (ff118f8)
     - [ ] Update the shopping list generation logic to group by ingredient name
     - [ ] Sum the normalized quantities
     - [ ] Task: Conductor - User Manual Verification 'Ingredient Consolidation' (Protocol in workflow.md)
