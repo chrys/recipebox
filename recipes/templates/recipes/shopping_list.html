@@ -21,9 +21,9 @@
                         <li class="flex items-start gap-2 mb-2">
                             <input type="checkbox" style="margin-top: 4px;">
                             <div>
-                                <strong>{{ ing.quantity }}</strong> {{ ing.name }}
+                                {% if ing.value %}<strong>{{ ing.value }} {{ ing.unit }}</strong> {% endif %}{{ ing.name }}
                                 <br>
-                                <small class="text-light">({{ ing.recipe }})</small>
+                                <small class="text-light">({{ ing.recipes }})</small>
                             </div>
                         </li>
                         {% endfor %}

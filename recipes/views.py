@@ -12,33 +12,62 @@ from django.views.generic import (
 import json
 from .models import Recipe, Category
 from .forms import RecipeForm, RecipeIngredientFormSet
+from decimal import Decimal
 
 
 from datetime import date
 from calendar_app.models import CalendarEntry
 from collections import defaultdict
 
+from .utils import normalize_to_base
+
 @login_required
 def shopping_list(request):
-    """Aggregate ingredients for recipes scheduled from today onwards."""
+    """Aggregate and consolidate ingredients for recipes scheduled from today onwards."""
     today = date.today()
     entries = CalendarEntry.objects.filter(
         user=request.user,
         date__gte=today
     ).select_related('recipe').prefetch_related('recipe__ingredients')
     
-    ingredients_by_aisle = defaultdict(list)
+    # Store as: { (aisle, name, unit): total_value }
+    consolidated = defaultdict(Decimal)
+    # Track which recipes use which ingredient (optional, but nice)
+    ingredient_recipes = defaultdict(set)
     
-    # Track unique ingredients to combine quantities if they are the same name in the same aisle
-    # For now, let's keep it simple and just group them.
     for entry in entries:
         for ing in entry.recipe.ingredients.all():
             aisle = ing.aisle or 'General'
-            ingredients_by_aisle[aisle].append({
-                'name': ing.name,
-                'quantity': ing.quantity,
-                'recipe': entry.recipe.title
-            })
+            name = ing.name.strip().title()
+            
+            val = ing.quantity_value
+            unit = ing.quantity_unit
+            
+            # If new fields are missing, try to parse the old 'quantity' string
+            if val is None and ing.quantity:
+                from .utils import parse_quantity
+                val, unit = parse_quantity(ing.quantity)
+            
+            if val is not None:
+                norm_val, norm_unit = normalize_to_base(val, unit)
+                consolidated[(aisle, name, norm_unit)] += norm_val
+                ingredient_recipes[(aisle, name, norm_unit)].add(entry.recipe.title)
+            else:
+                # Handle ingredients with only text descriptions (e.g., "a pinch")
+                # We'll just list these separately or group by name/unit=''
+                consolidated[(aisle, name, ing.quantity)] += Decimal('0')
+                ingredient_recipes[(aisle, name, ing.quantity)].add(entry.recipe.title)
+
+    # Convert to structured data for template
+    # { aisle: [ {name, value, unit, recipes}, ... ] }
+    ingredients_by_aisle = defaultdict(list)
+    for (aisle, name, unit), value in consolidated.items():
+        ingredients_by_aisle[aisle].append({
+            'name': name,
+            'value': value if value > 0 else None,
+            'unit': unit,
+            'recipes': ", ".join(sorted(ingredient_recipes[(aisle, name, unit)]))
+        })
             
     # Sort aisles alphabetically
     sorted_ingredients = dict(sorted(ingredients_by_aisle.items()))
