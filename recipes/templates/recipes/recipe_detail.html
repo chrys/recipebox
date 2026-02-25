@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load recipe_schema %}
+{% load recipe_schema core_tags %}
 
 {% block title %}{{ recipe.title }} — RecipeBox{% endblock %}
 {% block meta_description %}{{ recipe.description|truncatewords:25 }}{% endblock %}
@@ -7,7 +7,7 @@
 {% block content %}
 <!-- Hero Image -->
 {% if recipe.image %}
-<img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="recipe-hero">
+<img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="recipe-hero" style="max-height: 250px; width: auto; object-fit: contain;">
 {% endif %}
 
 <!-- Title & Meta -->
@@ -51,14 +51,16 @@
                 {% if recipe.ingredients.all %}
                 <ul style="padding-left: var(--space-4);">
                     {% for ing in recipe.ingredients.all %}
+                    {% if ing.name %}
                     <li style="margin-bottom: var(--space-2);">
                         {% if ing.quantity_value %}
-                            <strong>{{ ing.quantity_value }} {{ ing.quantity_unit }}</strong>
+                            <strong>{{ ing.quantity_value|normalize_quantity }} {{ ing.quantity_unit }}</strong>
                         {% elif ing.quantity %}
                             <strong>{{ ing.quantity }}</strong>
                         {% endif %}
                         {{ ing.name }}
                     </li>
+                    {% endif %}
                     {% endfor %}
                 </ul>
                 {% else %}
