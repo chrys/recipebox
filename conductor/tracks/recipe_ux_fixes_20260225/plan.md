@@ -37,7 +37,7 @@
     - [ ] Run tests and confirm green
     - [ ] Commit
 
-- [ ] Task: Wire autocomplete to ingredient name fields in create/edit form
+- [x] Task: Wire autocomplete to ingredient name fields in create/edit form 3d844c2
     - [ ] Write failing test in `Tests/unit/recipes/test_ingredient_autocomplete.py` asserting the ingredient name input has the correct `data-autocomplete-url` attribute in the rendered form
     - [ ] Update `recipe_form.html` ingredient name inputs: add `data-autocomplete-url` attribute
     - [ ] Add vanilla JS autocomplete widget (debounced fetch → dropdown) in a new `static/js/ingredient_autocomplete.js`
