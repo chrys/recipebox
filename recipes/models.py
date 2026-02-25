@@ -189,6 +189,13 @@ class RecipeIngredient(models.Model):
     class Meta:
         ordering = ["order"]
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.name:
+            Ingredient.objects.get_or_create(
+                user=self.recipe.user, name=self.name.strip()
+            )
+
     def __str__(self):
         from decimal import Decimal
 
