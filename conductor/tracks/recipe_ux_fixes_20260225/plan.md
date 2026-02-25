@@ -50,7 +50,7 @@
 
 ## Phase 3: Recipe List Improvements
 
-- [ ] Task: Sort recipe list alphabetically by title
+- [x] Task: Sort recipe list alphabetically by title 0516968
     - [ ] Write failing test in `Tests/unit/recipes/test_recipe_list.py` asserting recipes are returned in A–Z order by title
     - [ ] Update `RecipeListView.get_queryset()` to order by `title` (override `Recipe.Meta.ordering`)
     - [ ] Run tests and confirm green
