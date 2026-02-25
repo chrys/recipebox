@@ -124,6 +124,25 @@ class Recipe(models.Model):
         return [s.strip() for s in self.instructions.split("\n") if s.strip()]
 
 
+class Ingredient(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="historical_ingredients",
+        null=True,
+        blank=True,
+    )
+    name = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "name")
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
 class RecipeIngredient(models.Model):
     UNIT_CHOICES = [
         ("", "-- Unit --"),
