@@ -4,7 +4,7 @@
 
 - [x] Task: Fix empty bullet points in ingredient list a3d5336
 - [x] Task: Strip trailing zeros from quantity display a3d5336
-- [~] Task: Fix recipe photo display (full image, max 250px height)
+- [x] Task: Fix recipe photo display (full image, max 250px height) e6bd869
     - [ ] Write failing test in `Tests/unit/recipes/test_recipe_photo.py` asserting the `<img>` element has the correct CSS class/style on the detail page
     - [ ] Update `recipe_detail.html` image element: set `max-height: 250px; width: auto; object-fit: contain`
     - [ ] Run tests and confirm green
