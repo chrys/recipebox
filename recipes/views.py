@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
 from django.views.generic import (
@@ -14,8 +14,9 @@ from django.views.generic import (
     DeleteView,
 )
 import json
-from .models import Recipe, Category
-from .forms import RecipeForm, RecipeIngredientFormSet
+from .models import Recipe, Category, RecipeIngredient
+from .forms import RecipeForm, RecipeIngredientFormSet, RecipeIngredientForm
+from django.forms import inlineformset_factory
 from decimal import Decimal
 
 
@@ -161,12 +162,35 @@ class RecipeCreateView(LoginRequiredMixin, CreateView):
     form_class = RecipeForm
     template_name = "recipes/recipe_form.html"
 
+    def get_initial(self):
+        initial = super().get_initial()
+        prefill = self.request.session.get("prefill_recipe")
+        if prefill:
+            if "instructions" in prefill:
+                initial["instructions"] = prefill["instructions"]
+            if "title" in prefill:
+                initial["title"] = prefill["title"]
+        return initial
+
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         if self.request.POST:
             ctx["formset"] = RecipeIngredientFormSet(self.request.POST)
         else:
-            ctx["formset"] = RecipeIngredientFormSet()
+            prefill = self.request.session.pop("prefill_recipe", None)
+            if prefill and "ingredients" in prefill:
+                initial_ingredients = [{"name": ing} for ing in prefill["ingredients"]]
+                # Dynamically adjust extra to fit all prefilled ingredients
+                DynamicFormSet = inlineformset_factory(
+                    Recipe,
+                    RecipeIngredient,
+                    form=RecipeIngredientForm,
+                    extra=len(initial_ingredients),
+                    can_delete=True,
+                )
+                ctx["formset"] = DynamicFormSet(initial=initial_ingredients)
+            else:
+                ctx["formset"] = RecipeIngredientFormSet()
         ctx["is_edit"] = False
         return ctx
 
@@ -260,7 +284,22 @@ def ingredient_autocomplete(request):
 @require_POST
 def recipe_from_text(request):
     """Parse recipe from free-text and pre-fill create form."""
-    return JsonResponse({"status": "stub"})
+    text = request.POST.get("text", "").strip()
+    if not text:
+        messages.error(request, "No text provided.")
+        return redirect("recipe_create")
+
+    from .utils import parse_recipe_text
+
+    parsed = parse_recipe_text(text)
+
+    # Store in session for RecipeCreateView to pick up
+    request.session["prefill_recipe"] = {
+        "ingredients": parsed["ingredients"],
+        "instructions": "\n".join(parsed["steps"]),
+    }
+
+    return redirect("recipe_create")
 
 
 @login_required

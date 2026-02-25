@@ -75,6 +75,32 @@ def format_quantity(value, unit):
     return value, unit
 
 
+def parse_recipe_text(text: str) -> dict:
+    """
+    Extract ingredients (non-numbered lines) and steps (numbered lines) from text.
+    Steps are expected to be prefixed with numbers (e.g., '1. ', '2) ').
+    """
+    ingredients = []
+    steps = []
+    lines = text.strip().split("\n")
+
+    # Match lines starting with "1. ", "1) ", "2. ", etc.
+    step_pattern = re.compile(r"^\d+[\.\)]\s*(.*)$")
+
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+
+        match = step_pattern.match(line)
+        if match:
+            steps.append(match.group(1).strip())
+        else:
+            ingredients.append(line)
+
+    return {"ingredients": ingredients, "steps": steps}
+
+
 COMMON_INGREDIENTS = [
     "Salt",
     "Black pepper",
