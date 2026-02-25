@@ -22,6 +22,9 @@ class RecipeCreateModesTest(TestCase):
         self.assertContains(response, "Create from link")
 
 
+from unittest.mock import patch
+
+
 class RecipeParsingTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
@@ -68,3 +71,38 @@ class RecipeParsingTest(TestCase):
         self.assertContains(response, "Ingredient 2")
         # Instructions should have steps separated by newlines
         self.assertContains(response, "Step 1\nStep 2")
+
+    def test_recipe_from_link_prefill(self):
+        """Test that posting to recipe_from_link scrapes and pre-fills the form."""
+        self.client.login(username="testuser", password="password123")
+
+        with patch("recipes.views.scrape_me") as mock_scrape:
+            mock_instance = mock_scrape.return_value
+            mock_instance.title.return_value = "Scraped Recipe"
+            mock_instance.ingredients.return_value = ["Ing 1", "Ing 2"]
+            mock_instance.instructions.return_value = "Step 1\nStep 2"
+
+            url = reverse("recipe_from_link")
+            response = self.client.post(
+                url, {"url": "https://example.com/recipe"}, follow=True
+            )
+
+            self.assertEqual(response.status_code, 200)
+            self.assertContains(response, "Scraped Recipe")
+            self.assertContains(response, "Ing 1")
+            self.assertContains(response, "Step 1\nStep 2")
+
+    def test_recipe_from_link_error(self):
+        """Test that it handles scraping errors gracefully."""
+        self.client.login(username="testuser", password="password123")
+
+        with patch("recipes.views.scrape_me") as mock_scrape:
+            mock_scrape.side_effect = Exception("Scraping failed")
+
+            url = reverse("recipe_from_link")
+            response = self.client.post(
+                url, {"url": "https://example.com/recipe"}, follow=True
+            )
+
+            self.assertEqual(response.status_code, 200)
+            self.assertContains(response, "Could not scrape the recipe from this link")

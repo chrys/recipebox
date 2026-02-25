@@ -18,6 +18,7 @@ from .models import Recipe, Category, RecipeIngredient
 from .forms import RecipeForm, RecipeIngredientFormSet, RecipeIngredientForm
 from django.forms import inlineformset_factory
 from decimal import Decimal
+from recipe_scrapers import scrape_me
 
 
 from datetime import date
@@ -306,4 +307,24 @@ def recipe_from_text(request):
 @require_POST
 def recipe_from_link(request):
     """Scrape recipe from URL and pre-fill create form."""
-    return JsonResponse({"status": "stub"})
+    url = request.POST.get("url", "").strip()
+    if not url:
+        messages.error(request, "No URL provided.")
+        return redirect("recipe_create")
+
+    try:
+        scraper = scrape_me(url)
+        # Store in session for RecipeCreateView to pick up
+        request.session["prefill_recipe"] = {
+            "title": scraper.title(),
+            "ingredients": scraper.ingredients(),
+            "instructions": scraper.instructions(),
+        }
+    except Exception:
+        messages.error(
+            request,
+            "Could not scrape the recipe from this link. You may need to enter it manually.",
+        )
+        return redirect("recipe_create")
+
+    return redirect("recipe_create")
