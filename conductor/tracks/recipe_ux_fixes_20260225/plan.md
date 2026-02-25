@@ -69,13 +69,13 @@
 
 ## Phase 4: New Recipe Creation Modes
 
-- [ ] Task: Add tabbed interface to `/recipes/new/` page
-    - [ ] Write failing test in `Tests/unit/recipes/test_recipe_create_modes.py` asserting all three tab labels (Form, Create from text, Create from link) are present in the rendered template
-    - [ ] Update `recipe_form.html` (or create new `recipe_create_tabs.html`): add tab nav and three tab panels; the Form tab wraps the existing form
-    - [ ] Add vanilla JS tab switching (no page reload)
-    - [ ] Only show tabs on create (not edit): use existing `is_edit` context flag
-    - [ ] Run tests and confirm green
-    - [ ] Commit
+- [x] Task: Add tabbed interface to `/recipes/new/` page 0b50167
+    - [x] Write failing test in `Tests/unit/recipes/test_recipe_create_modes.py` asserting all three tab labels (Form, Create from text, Create from link) are present in the rendered template
+    - [x] Update `recipe_form.html` (or create new `recipe_create_tabs.html`): add tab nav and three tab panels; the Form tab wraps the existing form
+    - [x] Add vanilla JS tab switching (no page reload)
+    - [x] Only show tabs on create (not edit): use existing `is_edit` context flag
+    - [x] Run tests and confirm green
+    - [x] Commit
 
 - [ ] Task: Implement "Create from text" parsing and pre-fill
     - [ ] Write failing test in `Tests/unit/recipes/test_recipe_create_modes.py` asserting the `parse_recipe_text()` utility correctly extracts ingredients (non-numbered lines) and steps (numbered lines) from sample text
