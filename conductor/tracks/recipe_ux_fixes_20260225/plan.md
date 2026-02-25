@@ -48,7 +48,7 @@
 
 ---
 
-## Phase 3: Recipe List Improvements
+## Phase 3: Recipe List Improvements [checkpoint: 96175e1]
 
 - [x] Task: Sort recipe list alphabetically by title 0516968
     - [ ] Write failing test in `Tests/unit/recipes/test_recipe_list.py` asserting recipes are returned in A–Z order by title
