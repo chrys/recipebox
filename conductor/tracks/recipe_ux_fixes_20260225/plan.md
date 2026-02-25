@@ -1,6 +1,6 @@
 # Implementation Plan: Recipe UX Fixes & New Creation Modes
 
-## Phase 1: Bug Fixes — Recipe Display
+## Phase 1: Bug Fixes — Recipe Display [checkpoint: 71887c6]
 
 - [x] Task: Fix empty bullet points in ingredient list a3d5336
 - [x] Task: Strip trailing zeros from quantity display a3d5336
