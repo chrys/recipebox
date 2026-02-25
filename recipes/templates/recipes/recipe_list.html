@@ -1,12 +1,22 @@
 {% extends "base.html" %}
-{% load recipe_schema %}
+{% load recipe_schema static %}
 
 {% block title %}My Recipes — RecipeBox{% endblock %}
 
 {% block content %}
+<script src="{% static 'js/recipe_list_toggle.js' %}" defer></script>
+<style>
+    #recipe-list-view { display: none; }
+    .view-mode-list #recipe-grid-view { display: none; }
+    .view-mode-list #recipe-list-view { display: block; }
+</style>
+
 <div class="flex justify-between items-center mb-4" style="flex-wrap: wrap; gap: var(--space-2);">
     <h1>My Recipes</h1>
-    <a href="{% url 'recipe_create' %}" class="button">+ New Recipe</a>
+    <div class="hstack">
+        <button id="view-toggle" class="outline small" title="Toggle Grid/List View">⊞</button>
+        <a href="{% url 'recipe_create' %}" class="button">+ New Recipe</a>
+    </div>
 </div>
 
 <!-- Search & Filter -->
@@ -24,42 +34,54 @@
 </form>
 
 {% if recipes %}
-<div class="container">
-    <div class="row" style="gap: var(--space-4) 0;">
-        {% for recipe in recipes %}
-        <div class="col-4">
-            <article class="card" style="height: 100%;">
-                <a href="{{ recipe.get_absolute_url }}" style="text-decoration: none; color: inherit;">
-                    {% if recipe.image %}
-                    <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="recipe-card-img">
-                    {% else %}
-                    <div class="recipe-card-placeholder">🍽️</div>
-                    {% endif %}
-                    <header style="padding: var(--space-3);">
-                        <h3 style="margin: 0;">{{ recipe.title }}</h3>
-                        <div class="recipe-rating" data-recipe-id="{{ recipe.pk }}" style="font-size: 1.1rem; cursor: pointer; color: var(--color-warning, #f59e0b); display: flex; gap: 1px; margin-top: var(--space-1);">
-                            {% for i in "12345"|make_list %}
-                            <span class="star" data-value="{{ i }}">{% if recipe.rating and recipe.rating >= i|add:0 %}★{% else %}☆{% endif %}</span>
-                            {% endfor %}
-                        </div>
-                        {% if recipe.description %}
-                        <p style="margin: var(--space-1) 0 0; font-size: 0.9rem;" class="text-light">
-                            {{ recipe.description|truncatewords:15 }}
-                        </p>
+<div id="recipe-view-container">
+    <div id="recipe-grid-view" class="container">
+        <div class="row" style="gap: var(--space-4) 0;">
+            {% for recipe in recipes %}
+            <div class="col-4">
+                <article class="card" style="height: 100%;">
+                    <a href="{{ recipe.get_absolute_url }}" style="text-decoration: none; color: inherit;">
+                        {% if recipe.image %}
+                        <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="recipe-card-img">
+                        {% else %}
+                        <div class="recipe-card-placeholder">🍽️</div>
                         {% endif %}
-                    </header>
-                </a>
-                <footer class="flex justify-between items-center" style="padding: 0 var(--space-3) var(--space-3);">
-                    <div style="display: flex; gap: var(--space-1); flex-wrap: wrap;">
-                        {% for cat in recipe.categories.all %}<span class="badge">{{ cat.name }}</span>{% endfor %}
-                    </div>
-                    {% if recipe.total_time %}
-                    <small class="text-light">⏱ {{ recipe.total_time }} min</small>
-                    {% endif %}
-                </footer>
-            </article>
+                        <header style="padding: var(--space-3);">
+                            <h3 style="margin: 0;">{{ recipe.title }}</h3>
+                            <div class="recipe-rating" data-recipe-id="{{ recipe.pk }}" style="font-size: 1.1rem; cursor: pointer; color: var(--color-warning, #f59e0b); display: flex; gap: 1px; margin-top: var(--space-1);">
+                                {% for i in "12345"|make_list %}
+                                <span class="star" data-value="{{ i }}">{% if recipe.rating and recipe.rating >= i|add:0 %}★{% else %}☆{% endif %}</span>
+                                {% endfor %}
+                            </div>
+                            {% if recipe.description %}
+                            <p style="margin: var(--space-1) 0 0; font-size: 0.9rem;" class="text-light">
+                                {{ recipe.description|truncatewords:15 }}
+                            </p>
+                            {% endif %}
+                        </header>
+                    </a>
+                    <footer class="flex justify-between items-center" style="padding: 0 var(--space-3) var(--space-3);">
+                        <div style="display: flex; gap: var(--space-1); flex-wrap: wrap;">
+                            {% for cat in recipe.categories.all %}<span class="badge">{{ cat.name }}</span>{% endfor %}
+                        </div>
+                        {% if recipe.total_time %}
+                        <small class="text-light">⏱ {{ recipe.total_time }} min</small>
+                        {% endif %}
+                    </footer>
+                </article>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+    </div>
+
+    <div id="recipe-list-view" class="container">
+        <ul style="list-style: none; padding: 0;">
+            {% for recipe in recipes %}
+            <li style="padding: var(--space-3) 0; border-bottom: 1px solid var(--color-border-subtle, #eee);">
+                <a href="{{ recipe.get_absolute_url }}" style="font-weight: 500; font-size: 1.1rem;">{{ recipe.title }}</a>
+            </li>
+            {% endfor %}
+        </ul>
     </div>
 </div>
 

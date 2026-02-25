@@ -30,3 +30,25 @@ class RecipeListSortingTest(TestCase):
         self.assertEqual(
             titles, expected_titles, f"Recipes should be sorted A-Z. Got {titles}"
         )
+
+
+class RecipeListViewToggleTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="toggleuser", password="password123"
+        )
+        self.url = reverse("recipe_list")
+
+    def test_toggle_button_present(self):
+        """Test that the grid/list toggle button is present in the template."""
+        self.client.login(username="toggleuser", password="password123")
+        response = self.client.get(self.url)
+        self.assertContains(response, 'id="view-toggle"')
+
+    def test_list_view_container_present(self):
+        """Test that the list-view container is present in the template."""
+        Recipe.objects.create(user=self.user, title="Test Recipe", instructions="...")
+        self.client.login(username="toggleuser", password="password123")
+        response = self.client.get(self.url)
+        self.assertContains(response, 'id="recipe-list-view"')
+        self.assertContains(response, 'id="recipe-grid-view"')
