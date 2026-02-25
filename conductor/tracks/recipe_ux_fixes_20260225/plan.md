@@ -16,7 +16,7 @@
 
 ## Phase 2: Ingredient Autocomplete
 
-- [ ] Task: Create `Ingredient` master model and migration
+- [x] Task: Create `Ingredient` master model and migration 4c4685d
     - [ ] Write failing test in `Tests/unit/recipes/test_ingredient_autocomplete.py` asserting `Ingredient` model exists with `name` field and `user` FK
     - [ ] Add `Ingredient` model to `recipes/models.py` with fields: `user` (FK, nullable for global), `name` (CharField, unique per user), `created_at`
     - [ ] Generate and run migration
