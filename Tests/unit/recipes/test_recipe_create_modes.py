@@ -32,8 +32,9 @@ class RecipeParsingTest(TestCase):
         )
 
     def test_parse_recipe_text(self):
-        """Test that parse_recipe_text extracts ingredients and steps."""
-        text = """
+        """Test that parse_recipe_text extracts title, ingredients and steps."""
+        text = """Chicken Soup
+
 2 cups Flour
 1 tsp Salt
 
@@ -42,35 +43,44 @@ class RecipeParsingTest(TestCase):
 """
         result = parse_recipe_text(text)
 
-        expected_ingredients = ["2 cups Flour", "1 tsp Salt"]
-        expected_steps = [
-            "Mix ingredients in a bowl.",
-            "Bake at 350 degrees for 20 minutes.",
-        ]
+        self.assertEqual(result["title"], "Chicken Soup")
+        self.assertEqual(result["ingredients"], ["2 cups Flour", "1 tsp Salt"])
+        self.assertEqual(
+            result["steps"],
+            ["Mix ingredients in a bowl.", "Bake at 350 degrees for 20 minutes."],
+        )
 
-        self.assertEqual(result["ingredients"], expected_ingredients)
-        self.assertEqual(result["steps"], expected_steps)
+    def test_parse_recipe_text_no_title(self):
+        """Test parsing when no title is obvious."""
+        text = "2 cups Flour\n1. Cook"
+        result = parse_recipe_text(text)
+        self.assertEqual(result["title"], "")
+        self.assertEqual(result["ingredients"], ["2 cups Flour"])
+        self.assertEqual(result["steps"], ["Cook"])
 
     def test_parse_recipe_text_handles_varied_spacing(self):
         """Test that it handles extra whitespace and empty lines."""
-        text = "  Ingredient 1  \n\n  1. Step 1  "
+        text = "  My Recipe  \n\n  Ingredient 1  \n\n  1. Step 1  "
         result = parse_recipe_text(text)
+        self.assertEqual(result["title"], "My Recipe")
         self.assertEqual(result["ingredients"], ["Ingredient 1"])
         self.assertEqual(result["steps"], ["Step 1"])
 
     def test_recipe_from_text_prefill(self):
         """Test that posting to recipe_from_text pre-fills the creation form."""
         self.client.login(username="testuser", password="password123")
-        post_data = {"text": "Ingredient 1\nIngredient 2\n1. Step 1\n2. Step 2"}
+        post_data = {
+            "text": "Chicken Curry\nIngredient 1\nIngredient 2\n1. Step 1\n2. Step 2"
+        }
         url = reverse("recipe_from_text")
         response = self.client.post(url, post_data, follow=True)
 
         self.assertEqual(response.status_code, 200)
-        # Check if pre-filled data is in the form
+        self.assertContains(response, "Chicken Curry")
         self.assertContains(response, "Ingredient 1")
         self.assertContains(response, "Ingredient 2")
-        # Instructions should have steps separated by newlines
         self.assertContains(response, "Step 1\nStep 2")
+        self.assertContains(response, "Recipe pre-filled from text!")
 
     def test_recipe_from_link_prefill(self):
         """Test that posting to recipe_from_link scrapes and pre-fills the form."""
@@ -91,6 +101,7 @@ class RecipeParsingTest(TestCase):
             self.assertContains(response, "Scraped Recipe")
             self.assertContains(response, "Ing 1")
             self.assertContains(response, "Step 1\nStep 2")
+            self.assertContains(response, "Recipe scraped successfully!")
 
     def test_recipe_from_link_error(self):
         """Test that it handles scraping errors gracefully."""

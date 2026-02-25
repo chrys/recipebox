@@ -67,7 +67,7 @@
 
 ---
 
-## Phase 4: New Recipe Creation Modes
+## Phase 4: New Recipe Creation Modes [checkpoint: 58019e9]
 
 - [x] Task: Add tabbed interface to `/recipes/new/` page 0b50167
     - [x] Write failing test in `Tests/unit/recipes/test_recipe_create_modes.py` asserting all three tab labels (Form, Create from text, Create from link) are present in the rendered template
@@ -77,22 +77,22 @@
     - [x] Run tests and confirm green
     - [x] Commit
 
-- [ ] Task: Implement "Create from text" parsing and pre-fill
-    - [ ] Write failing test in `Tests/unit/recipes/test_recipe_create_modes.py` asserting the `parse_recipe_text()` utility correctly extracts ingredients (non-numbered lines) and steps (numbered lines) from sample text
-    - [ ] Add `parse_recipe_text(text: str) -> dict` function to `recipes/utils.py`
-    - [ ] Add `recipe_from_text` POST view to `recipes/views.py`: calls `parse_recipe_text`, redirects to create form pre-filled via GET params or session
-    - [ ] Add URL pattern `/recipes/new/from-text/` in `recipes/urls.py`
-    - [ ] Update "Create from text" tab panel: text area + example format hint + "Generate Recipe" button posting to the new view
-    - [ ] Run tests and confirm green
-    - [ ] Commit
+- [x] Task: Implement "Create from text" parsing and pre-fill 22a5723
+    - [x] Write failing test in `Tests/unit/recipes/test_recipe_create_modes.py` asserting the `parse_recipe_text()` utility correctly extracts ingredients (non-numbered lines) and steps (numbered lines) from sample text
+    - [x] Add `parse_recipe_text(text: str) -> dict` function to `recipes/utils.py`
+    - [x] Add `recipe_from_text` POST view to `recipes/views.py`: calls `parse_recipe_text`, redirects to create form pre-filled via GET params or session
+    - [x] Add URL pattern `/recipes/new/from-text/` in `recipes/urls.py`
+    - [x] Update "Create from text" tab panel: text area + example format hint + "Generate Recipe" button posting to the new view
+    - [x] Run tests and confirm green
+    - [x] Commit
 
-- [ ] Task: Implement "Create from link" scraping and pre-fill
-    - [ ] Write failing test in `Tests/unit/recipes/test_recipe_create_modes.py` asserting the `recipe_from_link` view returns a redirect with scraped data pre-filled (mock `scrape_me`) and returns an error on scraping failure
-    - [ ] Add `recipe_from_link` POST view to `recipes/views.py`: accepts URL, calls `scrape_me()`, stores result in session, redirects to create form; handles `scrape_me` exceptions gracefully
-    - [ ] Add URL pattern `/recipes/new/from-link/` in `recipes/urls.py`
-    - [ ] Update "Create from link" tab panel: URL input + "Generate Recipe" button
-    - [ ] Update `RecipeCreateView` to read pre-fill data from session when present
-    - [ ] Run tests and confirm green
-    - [ ] Commit
+- [x] Task: Implement "Create from link" scraping and pre-fill 58019e9
+    - [x] Write failing test in `Tests/unit/recipes/test_recipe_create_modes.py` asserting the `recipe_from_link` view returns a redirect with scraped data pre-filled (mock `scrape_me`) and returns an error on scraping failure
+    - [x] Add `recipe_from_link` POST view to `recipes/views.py`: accepts URL, calls `scrape_me()`, stores result in session, redirects to create form; handles `scrape_me` exceptions gracefully
+    - [x] Add URL pattern `/recipes/new/from-link/` in `recipes/urls.py`
+    - [x] Update "Create from link" tab panel: URL input + "Generate Recipe" button
+    - [x] Update `RecipeCreateView` to read pre-fill data from session when present
+    - [x] Run tests and confirm green
+    - [x] Commit
 
-- [ ] Task: Conductor - User Manual Verification 'Phase 4: New Creation Modes' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 4: New Creation Modes' (Protocol in workflow.md)

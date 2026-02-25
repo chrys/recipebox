@@ -181,15 +181,8 @@ class RecipeCreateView(LoginRequiredMixin, CreateView):
             prefill = self.request.session.pop("prefill_recipe", None)
             if prefill and "ingredients" in prefill:
                 initial_ingredients = [{"name": ing} for ing in prefill["ingredients"]]
-                # Dynamically adjust extra to fit all prefilled ingredients
-                DynamicFormSet = inlineformset_factory(
-                    Recipe,
-                    RecipeIngredient,
-                    form=RecipeIngredientForm,
-                    extra=len(initial_ingredients),
-                    can_delete=True,
-                )
-                ctx["formset"] = DynamicFormSet(initial=initial_ingredients)
+                # Use the existing formset class but pass initial data
+                ctx["formset"] = RecipeIngredientFormSet(initial=initial_ingredients)
             else:
                 ctx["formset"] = RecipeIngredientFormSet()
         ctx["is_edit"] = False
@@ -296,10 +289,14 @@ def recipe_from_text(request):
 
     # Store in session for RecipeCreateView to pick up
     request.session["prefill_recipe"] = {
+        "title": parsed.get("title", ""),
         "ingredients": parsed["ingredients"],
         "instructions": "\n".join(parsed["steps"]),
     }
 
+    messages.success(
+        request, "Recipe pre-filled from text! Please review and save below."
+    )
     return redirect("recipe_create")
 
 
@@ -314,12 +311,20 @@ def recipe_from_link(request):
 
     try:
         scraper = scrape_me(url)
+        # Handle instructions whether they are a list or string
+        instr = scraper.instructions()
+        if isinstance(instr, list):
+            instr = "\n".join(instr)
+
         # Store in session for RecipeCreateView to pick up
         request.session["prefill_recipe"] = {
             "title": scraper.title(),
             "ingredients": scraper.ingredients(),
-            "instructions": scraper.instructions(),
+            "instructions": instr,
         }
+        messages.success(
+            request, "Recipe scraped successfully! Please review and save below."
+        )
     except Exception:
         messages.error(
             request,
