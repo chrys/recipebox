@@ -138,7 +138,7 @@ class RecipeListView(LoginRequiredMixin, ListView):
         if category:
             qs = qs.filter(categories__slug=category)
 
-        return qs
+        return qs.order_by("title")
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
