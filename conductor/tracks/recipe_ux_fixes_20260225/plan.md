@@ -14,7 +14,7 @@
 
 ---
 
-## Phase 2: Ingredient Autocomplete
+## Phase 2: Ingredient Autocomplete [checkpoint: 1fcb791]
 
 - [x] Task: Create `Ingredient` master model and migration 4c4685d
     - [ ] Write failing test in `Tests/unit/recipes/test_ingredient_autocomplete.py` asserting `Ingredient` model exists with `name` field and `user` FK
