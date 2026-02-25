@@ -7,7 +7,11 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
 from django.views.generic import (
-    ListView, DetailView, CreateView, UpdateView, DeleteView,
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView,
 )
 import json
 from .models import Recipe, Category
@@ -21,33 +25,36 @@ from collections import defaultdict
 
 from .utils import normalize_to_base
 
+
 @login_required
 def shopping_list(request):
     """Aggregate and consolidate ingredients for recipes scheduled from today onwards."""
     today = date.today()
-    entries = CalendarEntry.objects.filter(
-        user=request.user,
-        date__gte=today
-    ).select_related('recipe').prefetch_related('recipe__ingredients')
-    
+    entries = (
+        CalendarEntry.objects.filter(user=request.user, date__gte=today)
+        .select_related("recipe")
+        .prefetch_related("recipe__ingredients")
+    )
+
     # Store as: { (aisle, name, unit): total_value }
     consolidated = defaultdict(Decimal)
     # Track which recipes use which ingredient (optional, but nice)
     ingredient_recipes = defaultdict(set)
-    
+
     for entry in entries:
         for ing in entry.recipe.ingredients.all():
-            aisle = ing.aisle or 'General'
+            aisle = ing.aisle or "General"
             name = ing.name.strip().title()
-            
+
             val = ing.quantity_value
             unit = ing.quantity_unit
-            
+
             # If new fields are missing, try to parse the old 'quantity' string
             if val is None and ing.quantity:
                 from .utils import parse_quantity
+
                 val, unit = parse_quantity(ing.quantity)
-            
+
             if val is not None:
                 norm_val, norm_unit = normalize_to_base(val, unit)
                 consolidated[(aisle, name, norm_unit)] += norm_val
@@ -55,7 +62,7 @@ def shopping_list(request):
             else:
                 # Handle ingredients with only text descriptions (e.g., "a pinch")
                 # We'll just list these separately or group by name/unit=''
-                consolidated[(aisle, name, ing.quantity)] += Decimal('0')
+                consolidated[(aisle, name, ing.quantity)] += Decimal("0")
                 ingredient_recipes[(aisle, name, ing.quantity)].add(entry.recipe.title)
 
     # Convert to structured data for template
@@ -63,22 +70,25 @@ def shopping_list(request):
     ingredients_by_aisle = defaultdict(list)
     for (aisle, name, unit), value in consolidated.items():
         from .utils import format_quantity
+
         display_val, display_unit = format_quantity(value, unit)
-        
-        ingredients_by_aisle[aisle].append({
-            'name': name,
-            'value': display_val if display_val and display_val > 0 else None,
-            'unit': display_unit,
-            'recipes': ", ".join(sorted(ingredient_recipes[(aisle, name, unit)]))
-        })
-            
+
+        ingredients_by_aisle[aisle].append(
+            {
+                "name": name,
+                "value": display_val if display_val and display_val > 0 else None,
+                "unit": display_unit,
+                "recipes": ", ".join(sorted(ingredient_recipes[(aisle, name, unit)])),
+            }
+        )
+
     # Sort aisles alphabetically
     sorted_ingredients = dict(sorted(ingredients_by_aisle.items()))
-    
+
     context = {
-        'ingredients_by_aisle': sorted_ingredients,
+        "ingredients_by_aisle": sorted_ingredients,
     }
-    return render(request, 'recipes/shopping_list.html', context)
+    return render(request, "recipes/shopping_list.html", context)
 
 
 @login_required
@@ -87,19 +97,20 @@ def update_rating(request, pk):
     recipe = get_object_or_404(Recipe, pk=pk)
     try:
         data = json.loads(request.body)
-        rating = int(data.get('rating'))
+        rating = int(data.get("rating"))
         if 1 <= rating <= 5:
             recipe.rating = rating
-            recipe.save(update_fields=['rating'])
-            return JsonResponse({'status': 'ok', 'rating': recipe.rating})
+            recipe.save(update_fields=["rating"])
+            return JsonResponse({"status": "ok", "rating": recipe.rating})
         else:
-            return JsonResponse({'error': 'Invalid rating'}, status=400)
+            return JsonResponse({"error": "Invalid rating"}, status=400)
     except (ValueError, TypeError, json.JSONDecodeError):
-        return JsonResponse({'error': 'Invalid data'}, status=400)
+        return JsonResponse({"error": "Invalid data"}, status=400)
 
 
 class RecipeOwnerMixin(UserPassesTestMixin):
     """Allow access to the recipe owner; also allow any logged-in user for public recipes."""
+
     def test_func(self):
         recipe = self.get_object()
         return recipe.user == self.request.user or recipe.public
@@ -107,15 +118,15 @@ class RecipeOwnerMixin(UserPassesTestMixin):
 
 class RecipeListView(LoginRequiredMixin, ListView):
     model = Recipe
-    template_name = 'recipes/recipe_list.html'
-    context_object_name = 'recipes'
+    template_name = "recipes/recipe_list.html"
+    context_object_name = "recipes"
     paginate_by = 12
 
     def get_queryset(self):
         # Show recipes owned by the user OR public recipes
         qs = Recipe.objects.filter(Q(user=self.request.user) | Q(public=True))
-        q = self.request.GET.get('q', '').strip()
-        category = self.request.GET.get('category', '').strip()
+        q = self.request.GET.get("q", "").strip()
+        category = self.request.GET.get("category", "").strip()
 
         if q:
             qs = qs.filter(
@@ -131,36 +142,36 @@ class RecipeListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx['search_query'] = self.request.GET.get('q', '')
-        ctx['current_category'] = self.request.GET.get('category', '')
-        ctx['categories'] = Category.objects.all().order_by('name')
+        ctx["search_query"] = self.request.GET.get("q", "")
+        ctx["current_category"] = self.request.GET.get("category", "")
+        ctx["categories"] = Category.objects.all().order_by("name")
         return ctx
 
 
 class RecipeDetailView(LoginRequiredMixin, RecipeOwnerMixin, DetailView):
     model = Recipe
-    template_name = 'recipes/recipe_detail.html'
-    context_object_name = 'recipe'
+    template_name = "recipes/recipe_detail.html"
+    context_object_name = "recipe"
 
 
 class RecipeCreateView(LoginRequiredMixin, CreateView):
     model = Recipe
     form_class = RecipeForm
-    template_name = 'recipes/recipe_form.html'
+    template_name = "recipes/recipe_form.html"
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         if self.request.POST:
-            ctx['formset'] = RecipeIngredientFormSet(self.request.POST)
+            ctx["formset"] = RecipeIngredientFormSet(self.request.POST)
         else:
-            ctx['formset'] = RecipeIngredientFormSet()
-        ctx['is_edit'] = False
+            ctx["formset"] = RecipeIngredientFormSet()
+        ctx["is_edit"] = False
         return ctx
 
     def form_valid(self, form):
         form.instance.user = self.request.user
         ctx = self.get_context_data()
-        formset = ctx['formset']
+        formset = ctx["formset"]
         if formset.is_valid():
             self.object = form.save()
             formset.instance = self.object
@@ -168,7 +179,7 @@ class RecipeCreateView(LoginRequiredMixin, CreateView):
             # Set ingredient order
             for i, ingredient in enumerate(self.object.ingredients.all()):
                 ingredient.order = i
-                ingredient.save(update_fields=['order'])
+                ingredient.save(update_fields=["order"])
             messages.success(self.request, f'Recipe "{self.object.title}" created!')
             return super().form_valid(form)
         else:
@@ -178,22 +189,22 @@ class RecipeCreateView(LoginRequiredMixin, CreateView):
 class RecipeUpdateView(LoginRequiredMixin, RecipeOwnerMixin, UpdateView):
     model = Recipe
     form_class = RecipeForm
-    template_name = 'recipes/recipe_form.html'
+    template_name = "recipes/recipe_form.html"
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         if self.request.POST:
-            ctx['formset'] = RecipeIngredientFormSet(
+            ctx["formset"] = RecipeIngredientFormSet(
                 self.request.POST, instance=self.object
             )
         else:
-            ctx['formset'] = RecipeIngredientFormSet(instance=self.object)
-        ctx['is_edit'] = True
+            ctx["formset"] = RecipeIngredientFormSet(instance=self.object)
+        ctx["is_edit"] = True
         return ctx
 
     def form_valid(self, form):
         ctx = self.get_context_data()
-        formset = ctx['formset']
+        formset = ctx["formset"]
         if formset.is_valid():
             self.object = form.save()
             formset.instance = self.object
@@ -206,8 +217,38 @@ class RecipeUpdateView(LoginRequiredMixin, RecipeOwnerMixin, UpdateView):
 
 class RecipeDeleteView(LoginRequiredMixin, RecipeOwnerMixin, DeleteView):
     model = Recipe
-    success_url = reverse_lazy('recipe_list')
+    success_url = reverse_lazy("recipe_list")
 
     def form_valid(self, form):
         messages.success(self.request, f'Recipe "{self.object.title}" deleted.')
         return super().form_valid(form)
+
+
+@login_required
+def ingredient_autocomplete(request):
+    """Return JSON list of ingredient name suggestions for autocomplete."""
+    from .models import Ingredient
+    from .utils import COMMON_INGREDIENTS
+
+    query = request.GET.get("q", "").strip()
+    if not query:
+        return JsonResponse({"suggestions": []})
+
+    # Historical ingredients for this user + global ones
+    db_matches = (
+        Ingredient.objects.filter(
+            Q(user=request.user) | Q(user=None), name__icontains=query
+        )
+        .values_list("name", flat=True)
+        .distinct()
+    )
+
+    # Built-in common ingredients
+    builtin_matches = [
+        name for name in COMMON_INGREDIENTS if query.lower() in name.lower()
+    ]
+
+    # Combine and unique, keeping original casing from DB if possible
+    suggestions = sorted(list(set(list(db_matches) + builtin_matches)))
+
+    return JsonResponse({"suggestions": suggestions})
