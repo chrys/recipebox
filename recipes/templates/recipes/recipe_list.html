@@ -9,6 +9,18 @@
     #recipe-list-view { display: none; }
     .view-mode-list #recipe-grid-view { display: none; }
     .view-mode-list #recipe-list-view { display: block; }
+    
+    /* Smaller boxes in grid view */
+    #recipe-grid-view .card {
+        padding: var(--space-3);
+    }
+    #recipe-grid-view h3 {
+        font-size: var(--text-5);
+    }
+    #recipe-grid-view .recipe-card-img, 
+    #recipe-grid-view .recipe-card-placeholder {
+        height: 120px;
+    }
 </style>
 
 <div class="flex justify-between items-center mb-4" style="flex-wrap: wrap; gap: var(--space-2);">
@@ -36,9 +48,9 @@
 {% if recipes %}
 <div id="recipe-view-container">
     <div id="recipe-grid-view" class="container">
-        <div class="row" style="gap: var(--space-4) 0;">
+        <div class="row" style="gap: var(--space-4);">
             {% for recipe in recipes %}
-            <div class="col-3">
+            <div class="col-2">
                 <article class="card" style="height: 100%;">
                     <a href="{{ recipe.get_absolute_url }}" style="text-decoration: none; color: inherit;">
                         {% if recipe.image %}
