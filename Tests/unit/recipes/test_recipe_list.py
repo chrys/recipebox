@@ -11,14 +11,14 @@ class RecipeListSortingTest(TestCase):
         self.user = User.objects.create_user(
             username="sortuser", password="password123"
         )
-        # Create recipes out of order
+        # Create recipes out of order and with mixed casing
         Recipe.objects.create(user=self.user, title="Banana Bread", instructions="...")
-        Recipe.objects.create(user=self.user, title="Apple Pie", instructions="...")
+        Recipe.objects.create(user=self.user, title="apple pie", instructions="...")
         Recipe.objects.create(user=self.user, title="Cherry Tart", instructions="...")
         self.url = reverse("recipe_list")
 
     def test_recipes_sorted_alphabetically(self):
-        """Test that recipes are returned in A-Z order by title."""
+        """Test that recipes are returned in A-Z order by title (case-insensitive)."""
         self.client.login(username="sortuser", password="password123")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -26,9 +26,11 @@ class RecipeListSortingTest(TestCase):
         recipes = response.context["recipes"]
         titles = [r.title for r in recipes]
 
-        expected_titles = sorted(["Banana Bread", "Apple Pie", "Cherry Tart"])
+        expected_titles = ["apple pie", "Banana Bread", "Cherry Tart"]
         self.assertEqual(
-            titles, expected_titles, f"Recipes should be sorted A-Z. Got {titles}"
+            titles,
+            expected_titles,
+            f"Recipes should be sorted A-Z (case-insensitive). Got {titles}",
         )
 
 

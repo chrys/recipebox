@@ -138,7 +138,9 @@ class RecipeListView(LoginRequiredMixin, ListView):
         if category:
             qs = qs.filter(categories__slug=category)
 
-        return qs.order_by("title")
+        from django.db.models.functions import Lower
+
+        return qs.order_by(Lower("title"))
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
