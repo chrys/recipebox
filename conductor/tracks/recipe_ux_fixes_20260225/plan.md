@@ -29,7 +29,7 @@
     - [ ] Run tests and confirm green
     - [ ] Commit
 
-- [ ] Task: Build ingredient autocomplete API endpoint
+- [x] Task: Build ingredient autocomplete API endpoint e84cea1
     - [ ] Write failing test in `Tests/unit/recipes/test_ingredient_autocomplete.py` asserting the endpoint returns JSON suggestions combining user history + fixed list, filtered by query, using fuzzy/stem matching
     - [ ] Add `ingredient_autocomplete` view to `recipes/views.py`: accepts `?q=` param, queries `Ingredient` table for user's history + common list, returns JSON `{suggestions: [...]}`
     - [ ] Add built-in common ingredients list (constant in `recipes/utils.py`)
