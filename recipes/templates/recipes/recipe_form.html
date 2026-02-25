@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load core_tags %}
 
 {% block title %}{% if is_edit %}Edit {{ form.instance.title }}{% else %}New Recipe{% endif %} — RecipeBox{% endblock %}
 
@@ -102,7 +103,7 @@
                 <div style="display: flex; gap: 4px; flex: 1.5; flex-direction: column;">
                     <div style="display: flex; gap: 4px;">
                         <input type="number" name="{{ ing_form.quantity_value.html_name }}"
-                            value="{{ ing_form.quantity_value.value|default_if_none:'' }}" placeholder="Qty"
+                            value="{{ ing_form.quantity_value.value|normalize_quantity }}" placeholder="Qty"
                             step="0.01" style="flex: 1;">
                         <select name="{{ ing_form.quantity_unit.html_name }}" style="flex: 1.2;">
                             <option value="">-- Unit --</option>
