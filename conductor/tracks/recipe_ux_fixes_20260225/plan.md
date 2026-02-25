@@ -2,19 +2,9 @@
 
 ## Phase 1: Bug Fixes — Recipe Display
 
-- [ ] Task: Fix empty bullet points in ingredient list
-    - [ ] Write failing test in `Tests/unit/recipes/test_ingredient_display.py` asserting no empty `<li>` elements rendered for blank ingredient formset rows on detail page
-    - [ ] Fix `recipe_detail.html` to filter out ingredients with empty name before rendering
-    - [ ] Run tests and confirm green
-    - [ ] Commit
-
-- [ ] Task: Strip trailing zeros from quantity display
-    - [ ] Write failing test in `Tests/unit/recipes/test_ingredient_display.py` asserting `2.00` renders as `2` and `0.50` as `0.5` on detail and edit pages
-    - [ ] Add a `normalize_quantity` template filter or update the template to use Python's `Decimal` `normalize()` for display
-    - [ ] Run tests and confirm green
-    - [ ] Commit
-
-- [ ] Task: Fix recipe photo display (full image, max 250px height)
+- [x] Task: Fix empty bullet points in ingredient list a3d5336
+- [x] Task: Strip trailing zeros from quantity display a3d5336
+- [~] Task: Fix recipe photo display (full image, max 250px height)
     - [ ] Write failing test in `Tests/unit/recipes/test_recipe_photo.py` asserting the `<img>` element has the correct CSS class/style on the detail page
     - [ ] Update `recipe_detail.html` image element: set `max-height: 250px; width: auto; object-fit: contain`
     - [ ] Run tests and confirm green
