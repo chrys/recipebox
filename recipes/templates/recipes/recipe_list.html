@@ -38,7 +38,7 @@
     <div id="recipe-grid-view" class="container">
         <div class="row" style="gap: var(--space-4) 0;">
             {% for recipe in recipes %}
-            <div class="col-4">
+            <div class="col-3">
                 <article class="card" style="height: 100%;">
                     <a href="{{ recipe.get_absolute_url }}" style="text-decoration: none; color: inherit;">
                         {% if recipe.image %}
