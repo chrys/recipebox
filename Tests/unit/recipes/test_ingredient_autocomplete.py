@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
+from django.urls import reverse
 from recipes.models import Ingredient, Recipe, RecipeIngredient
 
 User = get_user_model()
@@ -82,3 +83,65 @@ class AutoPersistTest(TestCase):
 
         exists = Ingredient.objects.filter(user=self.user, name="Cumin").exists()
         self.assertTrue(exists, "Ingredient should be persisted without whitespace")
+
+
+class AutocompleteAPITest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="apiuser", password="password123")
+        # Add some historical ingredients
+        Ingredient.objects.create(user=self.user, name="Onion")
+        Ingredient.objects.create(user=self.user, name="Garlic")
+        # Add some from another user (should NOT show up unless global)
+        other_user = User.objects.create_user(
+            username="otheruser", password="password123"
+        )
+        Ingredient.objects.create(user=other_user, name="Ginger")
+        # Add a global one
+        Ingredient.objects.create(user=None, name="Salt")
+
+    def test_autocomplete_endpoint_returns_json(self):
+        """Test that the autocomplete endpoint returns a JSON response."""
+        self.client.login(username="apiuser", password="password123")
+        response = self.client.get("/recipes/ingredients/autocomplete/?q=oni")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/json")
+        data = response.json()
+        self.assertIn("suggestions", data)
+
+    def test_autocomplete_filters_by_query(self):
+        """Test that the autocomplete filters suggestions by query."""
+        self.client.login(username="apiuser", password="password123")
+        response = self.client.get("/recipes/ingredients/autocomplete/?q=oni")
+        data = response.json()
+        suggestions = data["suggestions"]
+        self.assertIn("Onion", suggestions)
+        self.assertNotIn("Garlic", suggestions)
+
+    def test_autocomplete_includes_global_ingredients(self):
+        """Test that global ingredients are included in suggestions."""
+        self.client.login(username="apiuser", password="password123")
+        response = self.client.get("/recipes/ingredients/autocomplete/?q=sal")
+        data = response.json()
+        self.assertIn("Salt", data["suggestions"])
+
+    def test_autocomplete_excludes_other_users_ingredients(self):
+        """Test that other users' ingredients are not suggested."""
+        self.client.login(username="apiuser", password="password123")
+        response = self.client.get("/recipes/ingredients/autocomplete/?q=gin")
+        data = response.json()
+        self.assertNotIn("Ginger", data["suggestions"])
+
+
+class AutocompleteUITest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="uiuser", password="password123")
+
+    def test_ingredient_name_field_has_autocomplete_url(self):
+        """Test that the ingredient name input has the correct data-autocomplete-url."""
+        self.client.login(username="uiuser", password="password123")
+        response = self.client.get(reverse("recipe_create"))
+        self.assertEqual(response.status_code, 200)
+
+        # Check for data-autocomplete-url in the HTML
+        expected_url = reverse("ingredient_autocomplete")
+        self.assertContains(response, f'data-autocomplete-url="{expected_url}"')
