@@ -1,9 +1,10 @@
 {% extends "base.html" %}
-{% load core_tags %}
+{% load core_tags static %}
 
 {% block title %}{% if is_edit %}Edit {{ form.instance.title }}{% else %}New Recipe{% endif %} — RecipeBox{% endblock %}
 
 {% block content %}
+<script src="{% static 'js/ingredient_autocomplete.js' %}" defer></script>
 <h1>{% if is_edit %}Edit Recipe{% else %}New Recipe{% endif %}</h1>
 
 <article class="card" style="padding: var(--space-4);">
@@ -123,7 +124,8 @@
 
                 <div style="display: flex; flex-direction: column; flex: 2;">
                     <input type="text" name="{{ ing_form.name.html_name }}"
-                        value="{{ ing_form.name.value|default_if_none:'' }}" placeholder="Ingredient name *">
+                        value="{{ ing_form.name.value|default_if_none:'' }}" placeholder="Ingredient name *"
+                        data-autocomplete-url="{% url 'ingredient_autocomplete' %}">
                     {% if ing_form.name.errors %}
                         <div class="error" role="status" style="font-size: 0.8em; color: var(--color-danger);">
                             {{ ing_form.name.errors.0 }}
@@ -165,7 +167,8 @@
                 </select>
             </div>
 
-            <input type="text" name="ingredients-__prefix__-name" placeholder="Ingredient name *" style="flex: 2;">
+            <input type="text" name="ingredients-__prefix__-name" placeholder="Ingredient name *" style="flex: 2;"
+                data-autocomplete-url="{% url 'ingredient_autocomplete' %}">
             <input type="text" name="ingredients-__prefix__-aisle" placeholder="Aisle" style="flex: 1; max-width: 120px;">
             <input type="text" name="ingredients-__prefix__-quantity" placeholder="Notes (e.g. 'a pinch')" style="flex: 1; max-width: 150px;">
             
