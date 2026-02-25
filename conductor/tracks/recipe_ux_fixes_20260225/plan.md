@@ -23,7 +23,7 @@
     - [ ] Run tests and confirm green
     - [ ] Commit
 
-- [ ] Task: Auto-persist ingredient names on recipe save
+- [x] Task: Auto-persist ingredient names on recipe save d3497f1
     - [ ] Write failing test asserting that saving a `RecipeIngredient` upserts into the `Ingredient` master table for that user
     - [ ] Override `save()` on `RecipeIngredient` or use a `post_save` signal to upsert ingredient name into `Ingredient` table
     - [ ] Run tests and confirm green
