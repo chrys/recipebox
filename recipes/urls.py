@@ -14,4 +14,6 @@ urlpatterns = [
         views.ingredient_autocomplete,
         name="ingredient_autocomplete",
     ),
+    path("new/from-text/", views.recipe_from_text, name="recipe_from_text"),
+    path("new/from-link/", views.recipe_from_link, name="recipe_from_link"),
 ]

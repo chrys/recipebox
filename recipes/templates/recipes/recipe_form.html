@@ -5,8 +5,21 @@
 
 {% block content %}
 <script src="{% static 'js/ingredient_autocomplete.js' %}" defer></script>
+{% if not is_edit %}
+<script src="{% static 'js/recipe_tabs.js' %}" defer></script>
+{% endif %}
+
 <h1>{% if is_edit %}Edit Recipe{% else %}New Recipe{% endif %}</h1>
 
+{% if not is_edit %}
+<div role="tablist" style="margin-bottom: var(--space-4);">
+    <button role="tab" aria-selected="true" aria-controls="tab-form" id="tab-btn-form">Form</button>
+    <button role="tab" aria-selected="false" aria-controls="tab-text" id="tab-btn-text">Create from text</button>
+    <button role="tab" aria-selected="false" aria-controls="tab-link" id="tab-btn-link">Create from link</button>
+</div>
+{% endif %}
+
+<div id="tab-form" role="tabpanel" aria-labelledby="tab-btn-form">
 <article class="card" style="padding: var(--space-4);">
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
@@ -193,4 +206,56 @@
         </footer>
     </form>
 </article>
+</div>
+
+{% if not is_edit %}
+<div id="tab-text" role="tabpanel" aria-labelledby="tab-btn-text" hidden>
+    <article class="card">
+        <h2>Create from text</h2>
+        <p class="text-light">Paste a recipe below. Put each instruction on a new numbered line (e.g., 1. Step one).</p>
+        <form method="post" action="{% url 'recipe_from_text' %}">
+            {% csrf_token %}
+            <textarea name="text" rows="10" placeholder="Recipe title
+
+Ingredient 1
+Ingredient 2
+
+1. Step one
+2. Step two" required></textarea>
+            
+            <div style="margin-top: var(--space-4); padding: var(--space-3); background: var(--muted); border-radius: var(--radius-medium);">
+                <small><strong>Example format:</strong></small><br>
+                <pre style="font-size: 0.8em; margin: 0;">Chicken Stir Fry
+
+2 chicken breasts
+1 cup broccoli
+
+1. Heat oil in a pan.
+2. Add chicken and cook.</pre>
+            </div>
+
+            <footer class="flex gap-2 mt-4">
+                <button type="submit">Generate Recipe</button>
+            </footer>
+        </form>
+    </article>
+</div>
+
+<div id="tab-link" role="tabpanel" aria-labelledby="tab-btn-link" hidden>
+    <article class="card">
+        <h2>Create from link</h2>
+        <p class="text-light">Enter a recipe URL to scrape ingredients and instructions automatically.</p>
+        <form method="post" action="{% url 'recipe_from_link' %}">
+            {% csrf_token %}
+            <div data-field>
+                <label for="recipe-url">Recipe URL</label>
+                <input type="url" name="url" id="recipe-url" placeholder="https://example.com/recipe" required>
+            </div>
+            <footer class="flex gap-2 mt-4">
+                <button type="submit">Generate Recipe</button>
+            </footer>
+        </form>
+    </article>
+</div>
+{% endif %}
 {% endblock %}

@@ -254,3 +254,17 @@ def ingredient_autocomplete(request):
     suggestions = sorted(list(set(list(db_matches) + builtin_matches)))
 
     return JsonResponse({"suggestions": suggestions})
+
+
+@login_required
+@require_POST
+def recipe_from_text(request):
+    """Parse recipe from free-text and pre-fill create form."""
+    return JsonResponse({"status": "stub"})
+
+
+@login_required
+@require_POST
+def recipe_from_link(request):
+    """Scrape recipe from URL and pre-fill create form."""
+    return JsonResponse({"status": "stub"})
