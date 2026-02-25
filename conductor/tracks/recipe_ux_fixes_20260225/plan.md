@@ -56,12 +56,12 @@
     - [ ] Run tests and confirm green
     - [ ] Commit
 
-- [ ] Task: Add grid/list view toggle with localStorage persistence
-    - [ ] Write failing test in `Tests/unit/recipes/test_recipe_list.py` asserting the toggle button and list-view container are present in the rendered template
-    - [ ] Update `recipe_list.html`: add toggle button, add list-view HTML block (linked titles only), add CSS classes for grid/list states
-    - [ ] Add vanilla JS in `static/js/recipe_list_toggle.js`: toggle CSS class on container, persist choice to `localStorage`, restore on page load
-    - [ ] Run tests and confirm green
-    - [ ] Commit
+- [x] Task: Add grid/list view toggle with localStorage persistence 2699635
+    - [x] Write failing test in `Tests/unit/recipes/test_recipe_list.py` asserting the toggle button and list-view container are present in the rendered template
+    - [x] Update `recipe_list.html`: add toggle button, add list-view HTML block (linked titles only), add CSS classes for grid/list states
+    - [x] Add vanilla JS in `static/js/recipe_list_toggle.js`: toggle CSS class on container, persist choice to `localStorage`, restore on page load
+    - [x] Run tests and confirm green
+    - [x] Commit
 
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Recipe List Improvements' (Protocol in workflow.md)
 
