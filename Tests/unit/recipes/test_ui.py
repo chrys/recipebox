@@ -48,5 +48,6 @@ class RecipeFormTemplateTest(TestCase):
             public=True
         )
         
-        response = self.client.get(reverse('recipe_list'))
+        # Public recipes only show when recipe filter is set to 'public'
+        response = self.client.get(reverse('recipe_list') + '?recipes=public')
         self.assertContains(response, 'Other User Public Recipe')

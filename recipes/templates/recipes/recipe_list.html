@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load recipe_schema static %}
 
-{% block title %}My Recipes — RecipeBox{% endblock %}
+{% block title %}{% if recipe_filter == "public" %}Public Recipes{% else %}My Recipes{% endif %} — RecipeBox{% endblock %}
 
 {% block content %}
 <script src="{% static 'js/recipe_list_toggle.js' %}" defer></script>
@@ -24,7 +24,7 @@
 </style>
 
 <div class="flex justify-between items-center mb-4" style="flex-wrap: wrap; gap: var(--space-2);">
-    <h1>My Recipes</h1>
+    <h1>{% if recipe_filter == "public" %}Public Recipes{% else %}My Recipes{% endif %}</h1>
     <div class="hstack">
         <button id="view-toggle" class="outline small" title="Toggle Grid/List View">⊞</button>
         <a href="{% url 'recipe_create' %}" class="button">+ New Recipe</a>
@@ -35,6 +35,10 @@
 <form method="get" action="{% url 'recipe_list' %}" style="margin-bottom: var(--space-4);">
     <fieldset class="group">
         <input type="text" name="q" value="{{ search_query }}" placeholder="Search recipes…">
+        <select name="recipes">
+            <option value="own" {% if recipe_filter == "own" %}selected{% endif %}>My own recipes</option>
+            <option value="public" {% if recipe_filter == "public" %}selected{% endif %}>Public recipes</option>
+        </select>
         <select name="category">
             <option value="">All Categories</option>
             {% for cat in categories %}

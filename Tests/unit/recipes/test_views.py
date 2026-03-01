@@ -34,7 +34,8 @@ class RecipeListViewTest(TestCase):
 
     def test_public_recipes_visible(self):
         self.client.login(username='listuser', password='TestPass99!')
-        response = self.client.get(self.url)
+        # Public recipes only visible when recipes=public filter is applied
+        response = self.client.get(self.url, {'recipes': 'public'})
         self.assertContains(response, 'Public Salad')
 
     def test_private_other_recipes_not_visible(self):
@@ -68,8 +69,9 @@ class RecipeListViewTest(TestCase):
     def test_empty_search_returns_all(self):
         self.client.login(username='listuser', password='TestPass99!')
         response = self.client.get(self.url, {'q': ''})
+        # Default view shows only user's own recipes
         self.assertContains(response, 'My Pasta')
-        self.assertContains(response, 'Public Salad')
+        self.assertNotContains(response, 'Public Salad')
 
     def test_context_contains_search_query(self):
         self.client.login(username='listuser', password='TestPass99!')
