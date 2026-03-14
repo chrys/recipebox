@@ -248,10 +248,32 @@
   .outline-mobile-only {
     display: inline-flex !important;
   }
+
+  /* Search & Filter form stacking on mobile */
+  fieldset.group {
+    flex-direction: column;
+    border: none;
+    padding: 0;
+  }
+
+  fieldset.group > legend,
+  fieldset.group > :is(input, select, button) {
+    border-radius: var(--radius-medium) !important;
+    border-inline-end: 1px solid var(--input) !important;
+    margin-bottom: var(--space-2);
+    width: 100% !important;
+  }
 }
 
 .outline-mobile-only {
   display: none;
+}
+
+/* 3-column → 2-column on tablets */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .col-4 {
+    --span: 6 !important;
+  }
 }
 
 /* ---- Responsive grid breakpoints ---- */
