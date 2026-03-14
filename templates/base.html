@@ -46,7 +46,10 @@
         </ul>
       </nav>    <footer style="padding: var(--space-3);">
       {% if user.is_authenticated %}
-      <small class="text-light">Logged in as <strong>{{ user.username }}</strong></small>
+      <div class="vstack gap-2">
+        <small class="text-light">Logged in as <strong>{{ user.username }}</strong></small>
+        <button class="ghost small outline-mobile-only w-100" onclick="window.location.href='{% url 'account_logout' %}'">Logout</button>
+      </div>
       {% endif %}
     </footer>
   </aside>
