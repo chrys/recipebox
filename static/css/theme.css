@@ -158,12 +158,40 @@
 .ingredient-row {
   display: flex;
   gap: var(--space-2, 0.5rem);
-  align-items: flex-end;
+  align-items: flex-start; /* Changed from flex-end to flex-start for multi-line support */
   margin-bottom: var(--space-2, 0.5rem);
+  flex-wrap: wrap;
 }
 
-.ingredient-row input {
-  flex: 1;
+.ingredient-row > div,
+.ingredient-row > input {
+  flex: 1 1 auto;
+}
+
+@media (max-width: 600px) {
+  .ingredient-row {
+    flex-direction: column;
+    padding: var(--space-3);
+    background: var(--muted);
+    border-radius: var(--radius-medium);
+    border: 1px solid var(--border);
+    margin-bottom: var(--space-4);
+  }
+
+  .ingredient-row > div,
+  .ingredient-row > input {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  [role="tablist"] {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  [role="tab"] {
+    flex: 1 1 auto;
+  }
 }
 
 /* Auth pages centered layout */
