@@ -20,7 +20,7 @@
             {% endfor %}
         </div>
     </div>
-    <div class="hstack">
+    <div class="hstack" style="flex-wrap: wrap; margin-top: var(--space-2);">
         <a href="{% url 'recipe_edit' pk=recipe.pk %}" class="button outline">Edit</a>
         <button commandfor="delete-dialog" command="show-modal" data-variant="danger" class="outline">Delete</button>
         <button commandfor="calendar-dialog" command="show-modal" data-variant="secondary">📅 Add to Calendar</button>
@@ -116,8 +116,8 @@
                 Date
                 <input type="date" name="date" id="calendar-date-input" required>
             </label>
-            <fieldset class="hstack">
-                <legend>Meal</legend>
+            <fieldset class="vstack" style="align-items: flex-start; gap: var(--space-1);">
+                <legend>Meal Type</legend>
                 <label><input type="radio" name="meal_type" value="breakfast"> Breakfast</label>
                 <label><input type="radio" name="meal_type" value="lunch"> Lunch</label>
                 <label><input type="radio" name="meal_type" value="dinner" checked> Dinner</label>
