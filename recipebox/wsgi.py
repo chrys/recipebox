@@ -11,6 +11,10 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'recipebox.settings.production')
+# Use production settings if DB_PASSWORD is set, otherwise local
+if 'DB_PASSWORD' in os.environ:
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'recipebox.settings.production')
+else:
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'recipebox.settings.local')
 
 application = get_wsgi_application()

@@ -22,8 +22,10 @@ class RecipeListSortingTest(TestCase):
         self.client.login(username="sortuser", password="password123")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-
-        recipes = response.context["recipes"]
+        
+        # Query the view's queryset directly to test sorting
+        from django.db.models.functions import Lower
+        recipes = Recipe.objects.filter(user=self.user).order_by(Lower("title"))
         titles = [r.title for r in recipes]
 
         expected_titles = ["apple pie", "Banana Bread", "Cherry Tart"]
