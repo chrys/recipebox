@@ -25,7 +25,10 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
       </button>
       <menu popover id="user-menu">
-        <button role="menuitem" onclick="window.location.href='{% url 'account_logout' %}'">Logout</button>
+        <form method="post" action="{% url 'account_logout' %}" style="margin: 0;">
+          {% csrf_token %}
+          <button type="submit" role="menuitem" style="width: 100%; text-align: left; background: none; border: none; padding: var(--space-2) var(--space-3); cursor: pointer;">Logout</button>
+        </form>
       </menu>
     </ot-dropdown>
     {% endif %}
@@ -48,7 +51,10 @@
       {% if user.is_authenticated %}
       <div class="vstack gap-2">
         <small class="text-light">Logged in as <strong>{{ user.username }}</strong></small>
-        <button class="ghost small outline-mobile-only w-100" onclick="window.location.href='{% url 'account_logout' %}'">Logout</button>
+        <form method="post" action="{% url 'account_logout' %}" style="margin: 0; width: 100%;">
+          {% csrf_token %}
+          <button type="submit" class="ghost small outline-mobile-only w-100">Logout</button>
+        </form>
       </div>
       {% endif %}
     </footer>

@@ -116,9 +116,9 @@
                 
                 <div style="display: flex; gap: 4px; flex: 1.5; flex-direction: column;">
                     <div style="display: flex; gap: 4px;">
-                        <input type="number" name="{{ ing_form.quantity_value.html_name }}"
+                        <input type="text" inputmode="decimal" name="{{ ing_form.quantity_value.html_name }}"
                             value="{{ ing_form.quantity_value.value|normalize_quantity }}" placeholder="Qty"
-                            step="0.01" style="flex: 1;">
+                            style="flex: 1;">
                         <select name="{{ ing_form.quantity_unit.html_name }}" style="flex: 1.2;">
                             <option value="">-- Unit --</option>
                             {% for val, label in ing_form.fields.quantity_unit.choices %}
@@ -169,7 +169,7 @@
             <input type="hidden" name="ingredients-__prefix__-id" value="">
             
             <div style="display: flex; gap: 4px; flex: 1.5;">
-                <input type="number" name="ingredients-__prefix__-quantity_value" placeholder="Qty" step="0.01" style="flex: 1;">
+                <input type="text" inputmode="decimal" name="ingredients-__prefix__-quantity_value" placeholder="Qty" style="flex: 1;">
                 <select name="ingredients-__prefix__-quantity_unit" style="flex: 1.2;">
                     <option value="">-- Unit --</option>
                     {% for val, label in formset.empty_form.fields.quantity_unit.choices %}
@@ -180,8 +180,11 @@
                 </select>
             </div>
 
-            <input type="text" name="ingredients-__prefix__-name" placeholder="Ingredient name *" style="flex: 2;"
-                data-autocomplete-url="{% url 'ingredient_autocomplete' %}">
+            <div style="display: flex; flex-direction: column; flex: 2;">
+                <input type="text" name="ingredients-__prefix__-name" placeholder="Ingredient name *"
+                    data-autocomplete-url="{% url 'ingredient_autocomplete' %}">
+            </div>
+            
             <input type="text" name="ingredients-__prefix__-aisle" placeholder="Aisle" style="flex: 1; max-width: 120px;">
             <input type="text" name="ingredients-__prefix__-quantity" placeholder="Notes (e.g. 'a pinch')" style="flex: 1; max-width: 150px;">
             

@@ -220,6 +220,7 @@
 .ingredient-row > div,
 .ingredient-row > input {
   flex: 1 1 auto;
+  min-width: 0;
 }
 
 @media (max-width: 600px) {
