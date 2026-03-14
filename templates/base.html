@@ -32,10 +32,11 @@
   </nav>
 
   <!-- Sidebar -->
-      <aside data-sidebar>
-      <header style="padding: var(--space-3);">
-        <strong>🍳 RecipeBox</strong>
-      </header>
+  <aside data-sidebar>
+    <header style="padding: var(--space-3); display: flex; justify-content: space-between; align-items: center;">
+      <strong>🍳 RecipeBox</strong>
+      <button data-sidebar-toggle aria-label="Close menu" class="ghost small outline-mobile-only" style="padding: 0 var(--space-2);">✕</button>
+    </header>
       <nav>
         <ul>
           <li><a href="{% url 'recipe_list' %}" {% if request.resolver_match.url_name == 'recipe_list' %}aria-current="page"{% endif %}>🏠 Recipes</a></li>

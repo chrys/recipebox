@@ -244,6 +244,14 @@
     padding: var(--space-2) 0;
     min-height: var(--touch-target-min);
   }
+
+  .outline-mobile-only {
+    display: inline-flex !important;
+  }
+}
+
+.outline-mobile-only {
+  display: none;
 }
 
 /* ---- Responsive grid breakpoints ---- */
