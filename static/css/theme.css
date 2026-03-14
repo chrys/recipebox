@@ -199,7 +199,55 @@
   color: #1c1917;
 }
 
+/* ---- Mobile & Accessibility Overrides ---- */
+
+:root {
+  --touch-target-min: 44px;
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 16px; /* Ensure base is 16px */
+  }
+
+  /* Increase touch targets for buttons and interactive elements */
+  button, 
+  .button, 
+  input[type="submit"], 
+  input[type="button"], 
+  input[type="reset"],
+  .recipe-rating,
+  [role="menuitem"],
+  [role="tab"],
+  nav[data-sidebar] a {
+    min-height: var(--touch-target-min);
+    min-width: var(--touch-target-min);
+  }
+
+  /* Ensure form inputs are easy to tap */
+  input:not([type="checkbox"]):not([type="radio"]), 
+  select, 
+  textarea {
+    min-height: var(--touch-target-min);
+    font-size: 1rem !important; /* Prevent iOS zoom on focus */
+  }
+
+  /* Checkboxes and radios need larger hit areas too */
+  input[type="checkbox"], 
+  input[type="radio"] {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  label:has(input[type="checkbox"]), 
+  label:has(input[type="radio"]) {
+    padding: var(--space-2) 0;
+    min-height: var(--touch-target-min);
+  }
+}
+
 /* ---- Responsive grid breakpoints ---- */
+
 
 /* 3-column → 2-column on tablets */
 @media (max-width: 992px) {
