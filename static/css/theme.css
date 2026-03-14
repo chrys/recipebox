@@ -139,10 +139,64 @@
   margin-bottom: var(--space-1, 0.25rem);
 }
 
+.calendar-day-name {
+  display: none;
+}
+
+.calendar-day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-1);
+}
+
 .calendar-entries {
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+@media (max-width: 768px) {
+  .calendar-table thead {
+    display: none;
+  }
+  .calendar-table, 
+  .calendar-table tbody, 
+  .calendar-table tr, 
+  .calendar-table td {
+    display: block;
+    width: 100%;
+  }
+  .calendar-table td {
+    height: auto;
+    min-height: 80px;
+    padding: var(--space-4) !important;
+    border-bottom: 1px solid var(--border);
+  }
+  .calendar-table td.other-month {
+    display: none; /* Hide days from other months on mobile list view */
+  }
+  .calendar-day-name {
+    display: inline;
+    font-weight: 600;
+  }
+  .calendar-day-num {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+  }
+  .calendar-entries {
+    margin-bottom: var(--space-4);
+    gap: 4px;
+  }
+  .calendar-add-btn {
+    position: relative;
+    bottom: 0;
+    right: 0;
+    display: block !important;
+    width: 100%;
+    margin-top: var(--space-2);
+  }
 }
 
 .calendar-add-btn {
@@ -320,15 +374,6 @@
   .col-4 {
     flex: 0 0 100%;
     max-width: 100%;
-  }
-
-  .calendar-table td {
-    height: 60px;
-    font-size: 0.75rem;
-  }
-
-  .calendar-add-btn {
-    display: none;
   }
 
   .recipe-hero {

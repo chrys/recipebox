@@ -41,7 +41,10 @@
                 {% for day in week %}
                 <td
                     class="{% if day.is_today %}today{% endif %} {% if not day.is_current_month %}other-month{% endif %}">
-                    <div class="calendar-day-num">{{ day.date.day }}</div>
+                    <div class="calendar-day-header">
+                        <span class="calendar-day-name">{{ day.date|date:"l" }}</span>
+                        <span class="calendar-day-num">{{ day.date.day }}</span>
+                    </div>
                     <div class="calendar-entries">
                         {% for entry in day.entries %}
                         <ot-dropdown>
