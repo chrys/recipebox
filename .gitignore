@@ -21,3 +21,6 @@ media/
 
 # macOS
 .DS_Store
+
+#AI 
+conductor/
