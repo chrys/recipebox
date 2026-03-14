@@ -1,5 +1,5 @@
 # Initial Concept
-RecipeBox is a web application for managing recipes and meal planning.
+RecipeBox is a fully responsive web application for managing recipes and meal planning, designed for use in the kitchen and on-the-go.
 
 # RecipeBox Product Guide
 
@@ -18,6 +18,7 @@ To provide home cooks with an intuitive and efficient platform for organizing th
 - **Digital Recipe Collection:** A robust management system for creating, updating, and categorizing recipes with support for tags and media.
 - **Interactive Meal Calendar:** A visual dashboard for scheduling recipes to specific dates and meal times (Breakfast, Lunch, Dinner).
 - **Smart Shopping List:** Automated generation of consolidated grocery lists derived directly from the planned meal calendar.
+- **Responsive Design:** Fully mobile-friendly interface optimized for smartphones and tablets.
 - **Admin Settings:** User-specific controls for managing food categories and defining weekly scheduling preferences.
 
 ## Success Metrics
