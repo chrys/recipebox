@@ -18,13 +18,17 @@
                 <div style="padding: var(--space-4);">
                     <ul style="list-style: none; padding: 0;">
                         {% for ing in ingredients %}
-                        <li class="flex items-start gap-2 mb-2">
-                            <input type="checkbox" style="margin-top: 4px;">
-                            <div>
-                                {% if ing.value %}<strong>{{ ing.value }} {{ ing.unit }}</strong> {% endif %}{{ ing.name }}
-                                <br>
-                                <small class="text-light">({{ ing.recipes }})</small>
-                            </div>
+                        <li class="flex items-start gap-3 mb-4" style="border-bottom: 1px solid var(--border); padding-bottom: var(--space-3);">
+                            <label style="display: flex; gap: var(--space-3); width: 100%; cursor: pointer;">
+                                <input type="checkbox" style="flex-shrink: 0;">
+                                <div>
+                                    <span style="font-size: 1.1rem;">
+                                        {% if ing.value %}<strong>{{ ing.value }} {{ ing.unit }}</strong> {% endif %}{{ ing.name }}
+                                    </span>
+                                    <br>
+                                    <small class="text-light">({{ ing.recipes }})</small>
+                                </div>
+                            </label>
                         </li>
                         {% endfor %}
                     </ul>
