@@ -210,58 +210,90 @@
 
 /* Ingredient row styling */
 .ingredient-row {
-  display: flex;
+  display: grid;
+  gap: var(--space-3, 0.75rem);
+  margin-bottom: var(--space-3, 0.75rem);
+  padding: var(--space-3, 0.75rem);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-medium);
+}
+
+.ingredient-primary-fields,
+.ingredient-secondary-fields {
+  display: grid;
   gap: var(--space-2, 0.5rem);
-  align-items: flex-start;
-  margin-bottom: var(--space-2, 0.5rem);
-  flex-wrap: wrap;
+  align-items: end;
+}
+
+.ingredient-primary-fields {
+  grid-template-columns: minmax(180px, 0.9fr) minmax(0, 1.4fr);
+}
+
+.ingredient-secondary-fields {
+  grid-template-columns: minmax(120px, 0.8fr) minmax(0, 1.4fr) auto;
+}
+
+.ing-field {
+  min-width: 0;
+}
+
+.ing-field label {
+  display: block;
+  margin-bottom: var(--space-1, 0.25rem);
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
 }
 
 .ing-qty-group {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: var(--space-2, 0.5rem);
+}
+
+.ing-qty,
+.ing-unit,
+.ing-name,
+.ing-aisle,
+.ing-notes {
+  width: 100%;
+  min-width: 0;
+}
+
+.ing-actions {
   display: flex;
-  gap: 4px;
-  flex: 1.5;
-  min-width: 140px;
+  align-items: end;
 }
 
-.ing-name {
-  flex: 2;
-  min-width: 200px;
+.remove-ingredient {
+  white-space: nowrap;
 }
-
-.ing-aisle { flex: 1; max-width: 120px; }
-.ing-notes { flex: 1.5; }
-
-.ing-qty { flex: 1; }
-.ing-unit { flex: 1.2; }
 
 @media (max-width: 600px) {
   .ingredient-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
     padding: var(--space-4);
-    background: var(--muted);
-    border-radius: var(--radius-medium);
-    border: 1px solid var(--border);
     margin-bottom: var(--space-4);
     gap: var(--space-3);
   }
 
+  .ingredient-primary-fields,
+  .ingredient-secondary-fields,
+  .ing-qty-group,
+  .ing-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ingredient-primary-fields,
+  .ingredient-secondary-fields,
+  .ing-field,
   .ing-qty-group,
   .ing-name,
   .ing-aisle,
-  .ing-notes {
+  .ing-notes,
+  .remove-ingredient {
     width: 100% !important;
     max-width: none !important;
     min-width: 0 !important;
-    flex: none !important;
-  }
-
-  .ing-qty-group {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: var(--space-2);
-    align-items: stretch;
   }
 
   .ing-qty-group input,
@@ -269,13 +301,13 @@
   .ing-name,
   .ing-aisle,
   .ing-notes,
-  .ingredient-row > .remove-ingredient {
+  .remove-ingredient {
     width: 100% !important;
     min-width: 0 !important;
   }
 
-  .ingredient-row > .remove-ingredient {
-    justify-self: stretch;
+  .ing-actions {
+    display: block;
   }
 
   .ingredient-row > input[type="hidden"] {

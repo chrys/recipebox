@@ -121,38 +121,56 @@
             <div class="ingredient-row" {% if ing_form.DELETE.value %}style="display:none;" {% endif %}>
                 <input type="hidden" name="{{ ing_form.order.html_name }}" value="{{ forloop.counter0 }}">
                 {{ ing_form.id }}
-                
-                <div class="ing-qty-group">
-                    <input type="text" inputmode="decimal" name="{{ ing_form.quantity_value.html_name }}"
-                        value="{{ ing_form.quantity_value.value|normalize_quantity }}" placeholder="Qty"
-                        aria-label="Quantity" class="ing-qty">
-                    <select name="{{ ing_form.quantity_unit.html_name }}" aria-label="Unit" class="ing-unit">
-                        <option value="">-- Unit --</option>
-                        {% for val, label in ing_form.fields.quantity_unit.choices %}
-                            {% if val %}
-                                <option value="{{ val }}" {% if ing_form.quantity_unit.value == val %}selected{% endif %}>{{ label }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
+
+                <div class="ingredient-primary-fields">
+                    <div class="ing-field ing-field-qty">
+                        <label>Quantity</label>
+                        <div class="ing-qty-group">
+                            <input type="number" inputmode="decimal" step="0.01" min="0" name="{{ ing_form.quantity_value.html_name }}"
+                                value="{{ ing_form.quantity_value.value|normalize_quantity }}" placeholder="Qty"
+                                aria-label="Quantity" class="ing-qty">
+                            <select name="{{ ing_form.quantity_unit.html_name }}" aria-label="Unit" class="ing-unit">
+                                <option value="">-- Unit --</option>
+                                {% for val, label in ing_form.fields.quantity_unit.choices %}
+                                    {% if val %}
+                                        <option value="{{ val }}" {% if ing_form.quantity_unit.value == val %}selected{% endif %}>{{ label }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="ing-field">
+                        <label>Ingredient</label>
+                        <input type="text" name="{{ ing_form.name.html_name }}"
+                            value="{{ ing_form.name.value|default_if_none:'' }}" placeholder="Ingredient name *"
+                            aria-label="Ingredient name" class="ing-name" data-autocomplete-url="{% url 'ingredient_autocomplete' %}">
+                    </div>
                 </div>
 
-                <input type="text" name="{{ ing_form.name.html_name }}"
-                    value="{{ ing_form.name.value|default_if_none:'' }}" placeholder="Ingredient name *"
-                    aria-label="Ingredient name" class="ing-name" data-autocomplete-url="{% url 'ingredient_autocomplete' %}">
-                
-                <input type="text" name="{{ ing_form.aisle.html_name }}"
-                    value="{{ ing_form.aisle.value|default_if_none:'' }}" placeholder="Aisle"
-                    aria-label="Aisle" class="ing-aisle">
+                <div class="ingredient-secondary-fields">
+                    <div class="ing-field">
+                        <label>Aisle</label>
+                        <input type="text" name="{{ ing_form.aisle.html_name }}"
+                            value="{{ ing_form.aisle.value|default_if_none:'' }}" placeholder="Aisle"
+                            aria-label="Aisle" class="ing-aisle">
+                    </div>
 
-                <input type="text" name="{{ ing_form.quantity.html_name }}"
-                    value="{{ ing_form.quantity.value|default_if_none:'' }}" placeholder="Notes (e.g. 'a pinch')"
-                    aria-label="Notes" class="ing-notes">
+                    <div class="ing-field">
+                        <label>Notes</label>
+                        <input type="text" name="{{ ing_form.quantity.html_name }}"
+                            value="{{ ing_form.quantity.value|default_if_none:'' }}" placeholder="Notes (e.g. 'a pinch')"
+                            aria-label="Notes" class="ing-notes">
+                    </div>
 
-                {% if ing_form.DELETE %}
-                <input type="hidden" name="{{ ing_form.DELETE.html_name }}"
-                    value="{{ ing_form.DELETE.value|default_if_none:'' }}">
-                {% endif %}
-                <button type="button" class="remove-ingredient outline small" data-variant="danger" aria-label="Remove ingredient">✕</button>
+                    <div class="ing-actions">
+                        {% if ing_form.DELETE %}
+                        <input type="hidden" name="{{ ing_form.DELETE.html_name }}"
+                            value="{{ ing_form.DELETE.value|default_if_none:'' }}">
+                        {% endif %}
+                        <button type="button" class="remove-ingredient outline small" data-variant="danger" aria-label="Remove ingredient">Remove ingredient</button>
+                    </div>
+                </div>
             </div>
             {% endfor %}
         </div>
@@ -161,26 +179,45 @@
         <template id="empty-ingredient-form">
             <input type="hidden" name="ingredients-__prefix__-order" value="0">
             <input type="hidden" name="ingredients-__prefix__-id" value="">
-            
-            <div class="ing-qty-group">
-                <input type="text" inputmode="decimal" name="ingredients-__prefix__-quantity_value" placeholder="Qty" aria-label="Quantity" class="ing-qty">
-                <select name="ingredients-__prefix__-quantity_unit" aria-label="Unit" class="ing-unit">
-                    <option value="">-- Unit --</option>
-                    {% for val, label in formset.empty_form.fields.quantity_unit.choices %}
-                        {% if val %}
-                            <option value="{{ val }}">{{ label }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
+
+            <div class="ingredient-primary-fields">
+                <div class="ing-field ing-field-qty">
+                    <label>Quantity</label>
+                    <div class="ing-qty-group">
+                        <input type="number" inputmode="decimal" step="0.01" min="0" name="ingredients-__prefix__-quantity_value" placeholder="Qty" aria-label="Quantity" class="ing-qty">
+                        <select name="ingredients-__prefix__-quantity_unit" aria-label="Unit" class="ing-unit">
+                            <option value="">-- Unit --</option>
+                            {% for val, label in formset.empty_form.fields.quantity_unit.choices %}
+                                {% if val %}
+                                    <option value="{{ val }}">{{ label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="ing-field">
+                    <label>Ingredient</label>
+                    <input type="text" name="ingredients-__prefix__-name" placeholder="Ingredient name *" aria-label="Ingredient name" class="ing-name"
+                        data-autocomplete-url="{% url 'ingredient_autocomplete' %}">
+                </div>
             </div>
 
-            <input type="text" name="ingredients-__prefix__-name" placeholder="Ingredient name *" aria-label="Ingredient name" class="ing-name"
-                data-autocomplete-url="{% url 'ingredient_autocomplete' %}">
-            
-            <input type="text" name="ingredients-__prefix__-aisle" placeholder="Aisle" aria-label="Aisle" class="ing-aisle">
-            <input type="text" name="ingredients-__prefix__-quantity" placeholder="Notes (e.g. 'a pinch')" aria-label="Notes" class="ing-notes">
-            
-            <button type="button" class="remove-ingredient outline small" data-variant="danger" aria-label="Remove ingredient">✕</button>
+            <div class="ingredient-secondary-fields">
+                <div class="ing-field">
+                    <label>Aisle</label>
+                    <input type="text" name="ingredients-__prefix__-aisle" placeholder="Aisle" aria-label="Aisle" class="ing-aisle">
+                </div>
+
+                <div class="ing-field">
+                    <label>Notes</label>
+                    <input type="text" name="ingredients-__prefix__-quantity" placeholder="Notes (e.g. 'a pinch')" aria-label="Notes" class="ing-notes">
+                </div>
+
+                <div class="ing-actions">
+                    <button type="button" class="remove-ingredient outline small" data-variant="danger" aria-label="Remove ingredient">Remove ingredient</button>
+                </div>
+            </div>
         </template>
 
         <button type="button" id="add-ingredient" class="outline small" style="margin-top: var(--space-2);">+ Add Ingredient</button>
