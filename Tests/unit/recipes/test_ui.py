@@ -38,6 +38,12 @@ class RecipeFormTemplateTest(TestCase):
         self.assertContains(response, reverse('shopping_list'))
         self.assertContains(response, 'Shopping List')
 
+    def test_anonymous_sidebar_hides_shopping_list_link(self):
+        self.client.logout()
+        response = self.client.get(reverse('recipe_list'))
+        self.assertNotContains(response, reverse('shopping_list'))
+        self.assertNotContains(response, 'Shopping List')
+
     def test_public_recipes_visible_in_list(self):
         # Create a public recipe owned by another user
         other_user = User.objects.create_user(username='other', password='password123')

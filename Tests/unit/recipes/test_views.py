@@ -23,9 +23,12 @@ class RecipeListViewTest(TestCase):
             user=self.other, title='Secret Soup', instructions='Simmer', public=False
         )
 
-    def test_login_required(self):
+    def test_anonymous_user_sees_public_recipes(self):
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Public Salad')
+        self.assertNotContains(response, 'Secret Soup')
+        self.assertNotContains(response, 'My Pasta')
 
     def test_own_recipes_visible(self):
         self.client.login(username='listuser', password='TestPass99!')
@@ -116,12 +119,17 @@ class RecipeDetailViewTest(TestCase):
         self.client.login(username='stranger', password='TestPass99!')
         url = reverse('recipe_detail', kwargs={'pk': self.recipe.pk})
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 404)
 
-    def test_login_required(self):
+    def test_anonymous_user_can_view_public_recipe(self):
+        url = reverse('recipe_detail', kwargs={'pk': self.public_recipe.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_anonymous_user_cannot_view_private_recipe(self):
         url = reverse('recipe_detail', kwargs={'pk': self.recipe.pk})
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 404)
 
 
 class RecipeCreateViewTest(TestCase):
@@ -129,9 +137,10 @@ class RecipeCreateViewTest(TestCase):
         self.user = User.objects.create_user(username='creator', password='TestPass99!')
         self.url = reverse('recipe_create')
 
-    def test_login_required(self):
+    def test_guest_can_open_create_form(self):
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Sign up to save this recipe permanently')
 
     def test_get_renders_form(self):
         self.client.login(username='creator', password='TestPass99!')
@@ -156,6 +165,36 @@ class RecipeCreateViewTest(TestCase):
         self.assertEqual(response.status_code, 302)
         recipe = Recipe.objects.get(title='New Recipe')
         self.assertEqual(recipe.user, self.user)
+
+    def test_guest_post_stores_draft_and_redirects_to_recipe_create(self):
+        data = {
+            'title': 'Guest Draft Recipe',
+            'instructions': 'Do the guest thing',
+            'ingredients-TOTAL_FORMS': '1',
+            'ingredients-INITIAL_FORMS': '0',
+            'ingredients-MIN_NUM_FORMS': '0',
+            'ingredients-MAX_NUM_FORMS': '1000',
+            'ingredients-0-name': 'Tomato',
+            'ingredients-0-quantity_value': '2',
+            'ingredients-0-quantity_unit': 'piece',
+            'ingredients-0-quantity': '',
+            'ingredients-0-aisle': 'Produce',
+            'ingredients-0-order': '0',
+        }
+        response = self.client.post(self.url, data)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('recipe_create'))
+        self.assertFalse(Recipe.objects.filter(title='Guest Draft Recipe').exists())
+
+        draft = self.client.session.get('guest_recipe_draft')
+        self.assertIsNotNone(draft)
+        self.assertEqual(draft['recipe']['title'], 'Guest Draft Recipe')
+        self.assertEqual(draft['ingredients'][0]['name'], 'Tomato')
+
+        follow_response = self.client.get(response.url)
+        self.assertEqual(follow_response.status_code, 200)
+        self.assertContains(follow_response, 'Sign up to save this recipe permanently')
 
     def test_invalid_post_rerenders_form(self):
         self.client.login(username='creator', password='TestPass99!')

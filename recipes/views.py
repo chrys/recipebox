@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.decorators.http import require_POST
 from django.views.generic import (
     ListView,
@@ -28,9 +28,18 @@ from collections import defaultdict
 from .utils import normalize_to_base
 
 
-@login_required
 def shopping_list(request):
     """Aggregate and consolidate ingredients for recipes scheduled from today onwards."""
+    if not request.user.is_authenticated:
+        return render(
+            request,
+            "recipes/shopping_list.html",
+            {
+                "ingredients_by_aisle": {},
+                "guest_view": True,
+            },
+        )
+
     today = date.today()
     entries = (
         CalendarEntry.objects.filter(user=request.user, date__gte=today)
@@ -89,6 +98,7 @@ def shopping_list(request):
 
     context = {
         "ingredients_by_aisle": sorted_ingredients,
+        "guest_view": False,
     }
     return render(request, "recipes/shopping_list.html", context)
 
@@ -111,14 +121,14 @@ def update_rating(request, pk):
 
 
 class RecipeOwnerMixin(UserPassesTestMixin):
-    """Allow access to the recipe owner; also allow any logged-in user for public recipes."""
+    """Allow access only to the recipe owner."""
 
     def test_func(self):
         recipe = self.get_object()
-        return recipe.user == self.request.user or recipe.public
+        return recipe.user == self.request.user
 
 
-class RecipeListView(LoginRequiredMixin, ListView):
+class RecipeListView(ListView):
     model = Recipe
     template_name = "recipes/recipe_list.html"
     context_object_name = "recipes"
@@ -126,15 +136,19 @@ class RecipeListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         # Determine whether to show own recipes or public recipes
-        recipe_filter = self.request.GET.get("recipes", "own").strip()
-        
-        if recipe_filter == "public":
-            # Show only public recipes
-            qs = Recipe.objects.filter(public=True)
+        if self.request.user.is_authenticated:
+            recipe_filter = self.request.GET.get("recipes", "own").strip()
+
+            if recipe_filter == "public":
+                # Show only public recipes
+                qs = Recipe.objects.filter(public=True)
+            else:
+                # Show only recipes owned by the user (default)
+                qs = Recipe.objects.filter(user=self.request.user)
         else:
-            # Show only recipes owned by the user (default)
-            qs = Recipe.objects.filter(user=self.request.user)
-        
+            # Anonymous users can browse only public recipes
+            qs = Recipe.objects.filter(public=True)
+
         q = self.request.GET.get("q", "").strip()
         category = self.request.GET.get("category", "").strip()
 
@@ -156,18 +170,26 @@ class RecipeListView(LoginRequiredMixin, ListView):
         ctx = super().get_context_data(**kwargs)
         ctx["search_query"] = self.request.GET.get("q", "")
         ctx["current_category"] = self.request.GET.get("category", "")
-        ctx["recipe_filter"] = self.request.GET.get("recipes", "own")
+        if self.request.user.is_authenticated:
+            ctx["recipe_filter"] = self.request.GET.get("recipes", "own")
+        else:
+            ctx["recipe_filter"] = "public"
         ctx["categories"] = Category.objects.all().order_by("name")
         return ctx
 
 
-class RecipeDetailView(LoginRequiredMixin, RecipeOwnerMixin, DetailView):
+class RecipeDetailView(DetailView):
     model = Recipe
     template_name = "recipes/recipe_detail.html"
     context_object_name = "recipe"
 
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return Recipe.objects.filter(Q(public=True) | Q(user=self.request.user))
+        return Recipe.objects.filter(public=True)
 
-class RecipeCreateView(LoginRequiredMixin, CreateView):
+
+class RecipeCreateView(CreateView):
     model = Recipe
     form_class = RecipeForm
     template_name = "recipes/recipe_form.html"
@@ -198,10 +220,62 @@ class RecipeCreateView(LoginRequiredMixin, CreateView):
         return ctx
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
         ctx = self.get_context_data()
         formset = ctx["formset"]
         if formset.is_valid():
+            if not self.request.user.is_authenticated:
+                recipe_payload = {
+                    "title": form.cleaned_data.get("title", ""),
+                    "description": form.cleaned_data.get("description", ""),
+                    "instructions": form.cleaned_data.get("instructions", ""),
+                    "prep_time": form.cleaned_data.get("prep_time"),
+                    "cook_time": form.cleaned_data.get("cook_time"),
+                    "servings": form.cleaned_data.get("servings"),
+                    "public": form.cleaned_data.get("public", False),
+                }
+
+                ingredient_payload = []
+                for ingredient_form in formset.forms:
+                    cleaned = getattr(ingredient_form, "cleaned_data", None) or {}
+                    if not cleaned or cleaned.get("DELETE"):
+                        continue
+                    name = (cleaned.get("name") or "").strip()
+                    if not name:
+                        continue
+
+                    ingredient_payload.append(
+                        {
+                            "name": name,
+                            "quantity_value": (
+                                str(cleaned.get("quantity_value"))
+                                if cleaned.get("quantity_value") is not None
+                                else None
+                            ),
+                            "quantity_unit": cleaned.get("quantity_unit", ""),
+                            "quantity": cleaned.get("quantity", ""),
+                            "aisle": cleaned.get("aisle", ""),
+                            "order": cleaned.get("order") or 0,
+                        }
+                    )
+
+                self.request.session["guest_recipe_draft"] = {
+                    "recipe": recipe_payload,
+                    "ingredients": ingredient_payload,
+                }
+                self.request.session["prefill_recipe"] = {
+                    "title": recipe_payload["title"],
+                    "instructions": recipe_payload["instructions"],
+                    "ingredients": [ing["name"] for ing in ingredient_payload],
+                }
+                self.request.session.modified = True
+
+                messages.info(
+                    self.request,
+                    "Draft captured. Sign up to save this recipe permanently.",
+                )
+                return redirect("recipe_create")
+
+            form.instance.user = self.request.user
             self.object = form.save()
             formset.instance = self.object
             formset.save()
@@ -253,7 +327,6 @@ class RecipeDeleteView(LoginRequiredMixin, RecipeOwnerMixin, DeleteView):
         return super().form_valid(form)
 
 
-@login_required
 def ingredient_autocomplete(request):
     """Return JSON list of ingredient name suggestions for autocomplete."""
     from .models import Ingredient
@@ -264,13 +337,14 @@ def ingredient_autocomplete(request):
         return JsonResponse({"suggestions": []})
 
     # Historical ingredients for this user + global ones
-    db_matches = (
-        Ingredient.objects.filter(
+    if request.user.is_authenticated:
+        ingredient_qs = Ingredient.objects.filter(
             Q(user=request.user) | Q(user=None), name__icontains=query
         )
-        .values_list("name", flat=True)
-        .distinct()
-    )
+    else:
+        ingredient_qs = Ingredient.objects.filter(user=None, name__icontains=query)
+
+    db_matches = ingredient_qs.values_list("name", flat=True).distinct()
 
     # Built-in common ingredients
     builtin_matches = [
@@ -283,7 +357,6 @@ def ingredient_autocomplete(request):
     return JsonResponse({"suggestions": suggestions})
 
 
-@login_required
 @require_POST
 def recipe_from_text(request):
     """Parse recipe from free-text and pre-fill create form."""
@@ -309,7 +382,6 @@ def recipe_from_text(request):
     return redirect("recipe_create")
 
 
-@login_required
 @require_POST
 def recipe_from_link(request):
     """Scrape recipe from URL and pre-fill create form."""

@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from recipes.models import Recipe
 
 User = get_user_model()
 
@@ -58,9 +59,7 @@ class CustomLogoutViewTest(TestCase):
     def test_user_is_actually_logged_out(self):
         self.client.login(username='logoutuser', password='TestPass99!')
         self.client.post(self.url)
-        # Accessing a login-required page should redirect
-        response = self.client.get(reverse('recipe_list'))
-        self.assertEqual(response.status_code, 302)
+        self.assertNotIn('_auth_user_id', self.client.session)
 
 
 class SignupViewTest(TestCase):
@@ -106,3 +105,43 @@ class SignupViewTest(TestCase):
             'password2': 'StrongPass99!',
         })
         self.assertRedirects(response, reverse('recipe_list'))
+
+    def test_signup_autosaves_guest_recipe_draft(self):
+        session = self.client.session
+        session['guest_recipe_draft'] = {
+            'recipe': {
+                'title': 'Session Draft',
+                'description': 'Draft description',
+                'instructions': 'Step one',
+                'prep_time': 10,
+                'cook_time': 20,
+                'servings': 2,
+                'public': True,
+            },
+            'ingredients': [
+                {
+                    'name': 'Onion',
+                    'quantity_value': '1',
+                    'quantity_unit': 'piece',
+                    'quantity': '',
+                    'aisle': 'Produce',
+                    'order': 0,
+                }
+            ],
+        }
+        session.save()
+
+        response = self.client.post(self.url, {
+            'username': 'draft_user',
+            'email': 'draft@new.com',
+            'password1': 'StrongPass99!',
+            'password2': 'StrongPass99!',
+        })
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(User.objects.filter(username='draft_user').exists())
+
+        recipe = Recipe.objects.get(title='Session Draft')
+        self.assertEqual(recipe.user.username, 'draft_user')
+        self.assertEqual(recipe.ingredients.count(), 1)
+        self.assertNotIn('guest_recipe_draft', self.client.session)

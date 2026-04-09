@@ -31,6 +31,11 @@
         </form>
       </menu>
     </ot-dropdown>
+    {% else %}
+    <div class="hstack" style="gap: var(--space-2);">
+      <a href="{% url 'account_login' %}" class="button ghost small">Login</a>
+      <a href="{% url 'account_signup' %}" class="button small">Sign Up</a>
+    </div>
     {% endif %}
   </nav>
 
@@ -43,9 +48,11 @@
       <nav>
         <ul>
           <li><a href="{% url 'recipe_list' %}" {% if request.resolver_match.url_name == 'recipe_list' %}aria-current="page"{% endif %}>🏠 Recipes</a></li>
+          {% if user.is_authenticated %}
           <li><a href="{% url 'calendar_view' %}" {% if request.resolver_match.url_name == 'calendar_view' or request.resolver_match.url_name == 'admin_settings' %}aria-current="page"{% endif %}>📅 Calendar</a></li>
           <li style="margin-left: var(--space-4); font-size: 0.9em;"><a href="{% url 'admin_settings' %}" {% if request.resolver_match.url_name == 'admin_settings' %}aria-current="page"{% endif %}>⚙️ Admin Settings</a></li>
           <li><a href="{% url 'shopping_list' %}" {% if request.resolver_match.url_name == 'shopping_list' %}aria-current="page"{% endif %}>🛒 Shopping List</a></li>
+          {% endif %}
         </ul>
       </nav>    <footer style="padding: var(--space-3);">
       {% if user.is_authenticated %}

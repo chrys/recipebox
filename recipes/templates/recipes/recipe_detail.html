@@ -21,9 +21,15 @@
         </div>
     </div>
     <div class="hstack" style="flex-wrap: wrap; margin-top: var(--space-2);">
+        {% if user.is_authenticated and recipe.user == user %}
         <a href="{% url 'recipe_edit' pk=recipe.pk %}" class="button outline">Edit</a>
         <button commandfor="delete-dialog" command="show-modal" data-variant="danger" class="outline">Delete</button>
+        {% endif %}
+        {% if user.is_authenticated %}
         <button commandfor="calendar-dialog" command="show-modal" data-variant="secondary">📅 Add to Calendar</button>
+        {% else %}
+        <a href="{% url 'account_signup' %}" class="button">Sign Up to Save Recipes</a>
+        {% endif %}
     </div>
 </div>
 
@@ -87,6 +93,7 @@
     </div>
 </div>
 
+{% if user.is_authenticated and recipe.user == user %}
 <!-- Delete Confirmation Dialog -->
 <dialog id="delete-dialog" closedby="any">
     <form method="post" action="{% url 'recipe_delete' pk=recipe.pk %}">
@@ -101,7 +108,9 @@
         </footer>
     </form>
 </dialog>
+{% endif %}
 
+{% if user.is_authenticated %}
 <!-- Add to Calendar Dialog -->
 <dialog id="calendar-dialog" closedby="any">
     <form method="post" action="{% url 'calendar_add' %}">
@@ -130,6 +139,7 @@
         </footer>
     </form>
 </dialog>
+{% endif %}
 
 {% block json_ld %}
 {% recipe_json_ld recipe request %}

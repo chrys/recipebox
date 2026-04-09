@@ -35,10 +35,14 @@
 <form method="get" action="{% url 'recipe_list' %}" style="margin-bottom: var(--space-4);">
     <fieldset class="group">
         <input type="text" name="q" value="{{ search_query }}" placeholder="Search recipes…">
+        {% if user.is_authenticated %}
         <select name="recipes">
             <option value="own" {% if recipe_filter == "own" %}selected{% endif %}>My own recipes</option>
             <option value="public" {% if recipe_filter == "public" %}selected{% endif %}>Public recipes</option>
         </select>
+        {% else %}
+        <input type="hidden" name="recipes" value="public">
+        {% endif %}
         <select name="category">
             <option value="">All Categories</option>
             {% for cat in categories %}

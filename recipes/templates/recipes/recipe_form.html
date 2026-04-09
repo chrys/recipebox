@@ -11,6 +11,14 @@
 
 <h1>{% if is_edit %}Edit Recipe{% else %}New Recipe{% endif %}</h1>
 
+{% if not user.is_authenticated %}
+<div role="alert" data-variant="warning" style="margin-bottom: var(--space-4);">
+    <strong>Sign up to save this recipe permanently.</strong>
+    <p style="margin: var(--space-2) 0 0;">You can draft your recipe now. We will save it automatically right after you create your account.</p>
+    <p style="margin: var(--space-2) 0 0;"><a href="{% url 'account_signup' %}" class="button outline small" style="background: var(--color-bg, #111); color: var(--color-text, #fff); border-color: currentColor;">Sign Up</a></p>
+</div>
+{% endif %}
+
 {% if not is_edit %}
 <div role="tablist" style="margin-bottom: var(--space-4);">
     <button role="tab" aria-selected="true" aria-controls="tab-form" id="tab-btn-form">Form</button>

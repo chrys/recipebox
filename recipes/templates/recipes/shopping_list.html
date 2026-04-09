@@ -5,8 +5,19 @@
 {% block content %}
 <div class="flex justify-between items-center mb-4">
     <h1>🛒 Shopping List</h1>
+    {% if not user.is_authenticated %}
+    <a href="{% url 'account_signup' %}" class="button small">Sign Up</a>
+    {% else %}
     <button class="button outline small" onclick="window.print()">Print List</button>
+    {% endif %}
 </div>
+
+{% if not user.is_authenticated %}
+<div role="alert" data-variant="warning" style="margin-bottom: var(--space-4);">
+    <strong>Sign up to save and manage your shopping list.</strong>
+    <p style="margin: var(--space-2) 0 0;">Guest mode is view-only for now. Create an account to unlock persistent shopping list features.</p>
+</div>
+{% endif %}
 
 {% if ingredients_by_aisle %}
 <div class="container">
@@ -40,8 +51,13 @@
 </div>
 {% else %}
 <div role="alert" data-variant="info" style="text-align: center;">
+    {% if guest_view %}
+    <strong>Sign up to generate a personalized shopping list.</strong>
+    <p>After creating an account, you can schedule recipes and we will build your shopping list automatically.</p>
+    {% else %}
     <strong>Your shopping list is empty.</strong>
     <p>Schedule some recipes in your <a href="{% url 'calendar_view' %}">calendar</a> to see the ingredients you'll need.</p>
+    {% endif %}
 </div>
 {% endif %}
 {% endblock %}

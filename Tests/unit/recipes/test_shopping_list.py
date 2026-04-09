@@ -49,3 +49,10 @@ class ShoppingListLogicTest(TestCase):
         
         # Verify past recipe's ingredient is NOT in the response
         self.assertNotIn(b'Old Egg', response.content)
+
+    def test_shopping_list_guest_view_is_accessible(self):
+        self.client.logout()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Sign up to save and manage your shopping list.', response.content)
+        self.assertNotIn(b'Milk', response.content)
