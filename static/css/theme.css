@@ -237,7 +237,8 @@
 
 @media (max-width: 600px) {
   .ingredient-row {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
     padding: var(--space-4);
     background: var(--muted);
     border-radius: var(--radius-medium);
@@ -256,10 +257,29 @@
     flex: none !important;
   }
 
-  /* Specific fix for inputs inside flex groups on mobile */
+  .ing-qty-group {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-2);
+    align-items: stretch;
+  }
+
   .ing-qty-group input,
-  .ing-qty-group select {
-    flex: 1 !important;
+  .ing-qty-group select,
+  .ing-name,
+  .ing-aisle,
+  .ing-notes,
+  .ingredient-row > .remove-ingredient {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .ingredient-row > .remove-ingredient {
+    justify-self: stretch;
+  }
+
+  .ingredient-row > input[type="hidden"] {
+    display: none;
   }
 
   [role="tablist"] {
