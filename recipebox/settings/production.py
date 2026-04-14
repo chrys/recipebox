@@ -10,13 +10,13 @@ from .base import *  # noqa: F401,F403
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    'www.fasolaki.com',
-    'fasolaki.com',
+    'www.myrecipes.website',
+    'myrecipes.website',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://www.fasolaki.com',
-    'https://fasolaki.com',
+    'https://www.myrecipes.website',
+    'https://myrecipes.website',
 ]
 
 SECRET_KEY = os.environ['SECRET_KEY']  # must be set; crash loudly if missing
