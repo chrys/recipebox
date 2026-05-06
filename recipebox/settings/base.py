@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'recipes',
     'calendar_app',
     'accounts',
+    'django_social_share',
 ]
 
 # ---------------------------------------------------------------------------
@@ -108,7 +109,19 @@ LOGIN_URL = '/recipes/accounts/login/'
 LOGIN_REDIRECT_URL = '/recipes/'
 LOGOUT_REDIRECT_URL = '/recipes/accounts/login/'
 
+# Firebase Admin SDK Initialization
+import firebase_admin
+from firebase_admin import credentials
+
+firebase_cred_path = BASE_DIR / 'my-recipes-8a3f9-firebase-adminsdk-fbsvc-5f8a9231f3.json'
+if firebase_cred_path.exists() and not firebase_admin._apps:
+    cred = credentials.Certificate(str(firebase_cred_path))
+    firebase_admin.initialize_app(cred)
+
 # ---------------------------------------------------------------------------
 # Default PK
 # ---------------------------------------------------------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Allow popups for Firebase Google Sign-In
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'

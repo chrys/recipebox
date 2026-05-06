@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /recipes/admin/
+Disallow: /recipes/accounts/
+Sitemap: /sitemap.xml

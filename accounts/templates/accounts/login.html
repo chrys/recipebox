@@ -1,33 +1,91 @@
 {% extends "base_auth.html" %}
 
 {% block title %}Login — RecipeBox{% endblock %}
-
 {% block content %}
 <h1>🍳 Login</h1>
 
 <article class="card">
-    <form method="post">
-        {% csrf_token %}
-
-        {% if form.errors %}
-        <div role="alert" data-variant="error">
-            <strong>Login failed.</strong> Please check your credentials.
-        </div>
-        {% endif %}
-
-        <label data-field>
-            Username
-            <input type="text" name="username" value="{{ form.username.value|default_if_none:'' }}"
-                placeholder="Your username" required autofocus>
-        </label>
-
-        <label data-field>
-            Password
-            <input type="password" name="password" placeholder="Your password" required>
-        </label>
-
-        <button type="submit" class="w-100" style="margin-top: var(--space-3);">Login</button>
+    <form id="auth-form" style="display: flex; flex-direction: column; gap: var(--space-3);">
+        <input type="email" id="email" placeholder="Email" required class="input">
+        <input type="password" id="password" placeholder="Password" required class="input">
+        <button type="button" class="btn btn-primary" onclick="handleAuth('login')">Login</button>
+        <button type="button" class="btn btn-secondary" onclick="handleGoogleAuth()">Sign in with Google</button>
     </form>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+      import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCN3Gv9ugi3mFm_hsf2R81CF6v-53t7bBg",
+        authDomain: "my-recipes-8a3f9.firebaseapp.com",
+        projectId: "my-recipes-8a3f9",
+        storageBucket: "my-recipes-8a3f9.firebasestorage.app",
+        messagingSenderId: "723385831580",
+        appId: "1:723385831580:web:88987ec5601ed825fc1d59",
+        measurementId: "G-3GPETSS1SB"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const googleProvider = new GoogleAuthProvider();
+
+      window.handleAuth = async (action) => {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        
+        try {
+          let userCredential = await signInWithEmailAndPassword(auth, email, password);
+          
+          // Get the ID Token to send to Django
+          const idToken = await userCredential.user.getIdToken();
+          
+          // Send token to Django via POST
+          const response = await fetch('{% url "firebase_login" %}', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ id_token: idToken })
+          });
+
+          if (response.ok) {
+            window.location.href = '{% url "recipe_list" %}';
+          } else {
+              const data = await response.json();
+              alert(data.error || "Login failed on server");
+          }
+        } catch (error) {
+          alert(error.message);
+        }
+      };
+
+      window.handleGoogleAuth = async () => {
+        try {
+          const result = await signInWithPopup(auth, googleProvider);
+          const idToken = await result.user.getIdToken();
+          
+          const response = await fetch('{% url "firebase_login" %}', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ id_token: idToken })
+          });
+
+          if (response.ok) {
+            window.location.href = '{% url "recipe_list" %}';
+          } else {
+              const data = await response.json();
+              alert(data.error || "Google login failed on server");
+          }
+        } catch (error) {
+          alert(error.message);
+        }
+      };
+    </script>
 
     <footer style="text-align: center; margin-top: var(--space-4);">
         <p>Don't have an account? <a href="{% url 'account_signup' %}">Sign up</a></p>

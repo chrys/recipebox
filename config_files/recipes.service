@@ -4,9 +4,9 @@ Documentation=https://docs.gunicorn.org
 After=network.target postgresql.service
 
 [Service]
-Type=notify
+Type=simple
 
-# The user/group that owns /srv/recipes (matches your standard pattern)
+# The user that owns /srv/recipes — change if different
 User=deploy
 Group=www-data
 

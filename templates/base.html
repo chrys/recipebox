@@ -9,8 +9,21 @@
   <link rel="stylesheet" href="{% static 'oat/oat.css' %}">
   <link rel="stylesheet" href="{% static 'css/theme.css' %}">
   {% block extra_css %}{% endblock %}
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XBJMD3B73H"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XBJMD3B73H');
+  </script>
 </head>
 <body data-sidebar-layout {% if request.session.theme == 'dark' %}data-theme="dark"{% endif %}>
+
+  <!-- Cookie Consent -->
+  <div id="cookie-consent" style="position: fixed; bottom: 0; width: 100%; background: #eee; padding: 10px; text-align: center; z-index: 1000;">
+    We use cookies to improve your experience. <button onclick="document.getElementById('cookie-consent').style.display='none'">Accept</button>
+  </div>
 
   <!-- Top nav -->
   <nav data-topnav>

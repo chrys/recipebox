@@ -2,45 +2,21 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from recipes.models import Recipe
+from unittest.mock import patch
+import json
 
 User = get_user_model()
 
 
 class CustomLoginViewTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
-            username='loginuser', password='TestPass99!'
-        )
         self.url = reverse('account_login')
 
     def test_get_renders_login_template(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'username', response.content)  # Form field should be in HTML
-
-    def test_valid_login_redirects(self):
-        response = self.client.post(self.url, {
-            'username': 'loginuser',
-            'password': 'TestPass99!',
-        })
-        # Should redirect to LOGIN_REDIRECT_URL
-        self.assertEqual(response.status_code, 302)
-
-    def test_invalid_credentials_shows_form(self):
-        response = self.client.post(self.url, {
-            'username': 'loginuser',
-            'password': 'WrongPassword!',
-        })
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'username', response.content)  # Form should be re-rendered
-        # Form should contain errors (check for error messages in HTML)
-        self.assertIn(b'login failed', response.content.lower())
-
-    def test_authenticated_user_redirected(self):
-        """An already-authenticated user visiting the login page is redirected."""
-        self.client.login(username='loginuser', password='TestPass99!')
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 302)
+        self.assertIn(b'id="email"', response.content)  # Form field should be in HTML
+        self.assertIn(b'id="password"', response.content)
 
 
 class CustomLogoutViewTest(TestCase):
@@ -69,44 +45,34 @@ class SignupViewTest(TestCase):
     def test_get_renders_signup_template(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'username', response.content)  # Form field should be in HTML
+        self.assertIn(b'id="email"', response.content)
+        self.assertIn(b'id="password"', response.content)
 
-    def test_valid_signup_creates_user_and_logs_in(self):
-        response = self.client.post(self.url, {
-            'username': 'brand_new',
-            'email': 'brand@new.com',
-            'password1': 'StrongPass99!',
-            'password2': 'StrongPass99!',
-        })
-        self.assertEqual(response.status_code, 302)
-        # User should exist
-        self.assertTrue(User.objects.filter(username='brand_new').exists())
-        # Should be auto-logged-in; accessing login-required page should work
-        resp = self.client.get(reverse('recipe_list'))
-        self.assertEqual(resp.status_code, 200)
 
-    def test_invalid_signup_rerenders_form(self):
-        response = self.client.post(self.url, {
-            'username': '',
-            'email': '',
-            'password1': 'x',
-            'password2': 'y',
-        })
+class FirebaseLoginTest(TestCase):
+    def setUp(self):
+        self.url = reverse('firebase_login')
+        
+    @patch('accounts.views.firebase_admin.auth.verify_id_token')
+    def test_valid_firebase_login_creates_user_and_logs_in(self, mock_verify):
+        mock_verify.return_value = {'email': 'brand@new.com', 'uid': '12345'}
+        
+        response = self.client.post(self.url, json.dumps({'id_token': 'fake_token'}), content_type='application/json')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'username', response.content)  # Form should be re-rendered
-        # No user created
-        self.assertEqual(User.objects.count(), 0)
+        
+        # User should exist
+        self.assertTrue(User.objects.filter(email='brand@new.com').exists())
+        # Should be auto-logged-in
+        self.assertIn('_auth_user_id', self.client.session)
 
-    def test_signup_redirects_to_recipe_list(self):
-        response = self.client.post(self.url, {
-            'username': 'redir_user',
-            'email': 'r@d.com',
-            'password1': 'StrongPass99!',
-            'password2': 'StrongPass99!',
-        })
-        self.assertRedirects(response, reverse('recipe_list'))
+    def test_missing_token_returns_error(self):
+        response = self.client.post(self.url, json.dumps({}), content_type='application/json')
+        self.assertEqual(response.status_code, 400)
 
-    def test_signup_autosaves_guest_recipe_draft(self):
+    @patch('accounts.views.firebase_admin.auth.verify_id_token')
+    def test_firebase_login_autosaves_guest_recipe_draft(self, mock_verify):
+        mock_verify.return_value = {'email': 'draft@new.com', 'uid': '12345'}
+        
         session = self.client.session
         session['guest_recipe_draft'] = {
             'recipe': {
@@ -131,17 +97,12 @@ class SignupViewTest(TestCase):
         }
         session.save()
 
-        response = self.client.post(self.url, {
-            'username': 'draft_user',
-            'email': 'draft@new.com',
-            'password1': 'StrongPass99!',
-            'password2': 'StrongPass99!',
-        })
+        response = self.client.post(self.url, json.dumps({'id_token': 'fake_token'}), content_type='application/json')
 
-        self.assertEqual(response.status_code, 302)
-        self.assertTrue(User.objects.filter(username='draft_user').exists())
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(User.objects.filter(email='draft@new.com').exists())
 
         recipe = Recipe.objects.get(title='Session Draft')
-        self.assertEqual(recipe.user.username, 'draft_user')
+        self.assertEqual(recipe.user.email, 'draft@new.com')
         self.assertEqual(recipe.ingredients.count(), 1)
         self.assertNotIn('guest_recipe_draft', self.client.session)

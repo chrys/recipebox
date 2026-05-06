@@ -4,3 +4,7 @@ python-dotenv>=1.0
 psycopg2-binary>=2.9
 gunicorn>=21.0
 recipe-scrapers
+firebase-admin
+django-social-share
+
+

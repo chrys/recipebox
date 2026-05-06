@@ -1,4 +1,6 @@
 from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
@@ -414,3 +416,24 @@ def recipe_from_link(request):
         return redirect("recipe_create")
 
     return redirect("recipe_create")
+
+def contact_view(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        message = request.POST.get("message")
+        
+        if name and email and message:
+            send_mail(
+                f"Contact form submission from {name}",
+                message,
+                email,
+                [settings.DEFAULT_FROM_EMAIL],
+                fail_silently=False,
+            )
+            messages.success(request, "Your message has been sent!")
+            return redirect("contact")
+        else:
+            messages.error(request, "Please fill in all fields.")
+            
+    return render(request, "pages/contact.html")

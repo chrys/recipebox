@@ -123,6 +123,10 @@ class Recipe(models.Model):
         """Return instructions split into a list of steps."""
         return [s.strip() for s in self.instructions.split("\n") if s.strip()]
 
+    @property
+    def image_alt_text(self):
+        return f"{self.title} image"
+
 
 class Ingredient(models.Model):
     user = models.ForeignKey(

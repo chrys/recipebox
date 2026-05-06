@@ -26,8 +26,34 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ---- Django Messages → oat toasts ----
-    const messagesEl = document.getElementById('django-messages');
+    // ---- First-time Walkthrough ----
+    if (!localStorage.getItem('walkthrough_done')) {
+        const steps = [
+            { text: "Welcome! Here's how to add new recipes.", element: document.querySelector('a[href*="/new/"]') },
+            { text: "Use search to find your favorites.", element: document.querySelector('input[name="q"]') },
+            { text: "Schedule meals in your calendar.", element: document.querySelector('a[href*="/calendar/"]') },
+            { text: "Shopping lists are generated here.", element: document.querySelector('a[href*="/shopping-list/"]') }
+        ];
+
+        let currentStep = 0;
+        const showStep = () => {
+            if (currentStep >= steps.length) {
+                localStorage.setItem('walkthrough_done', 'true');
+                return;
+            }
+            const step = steps[currentStep];
+            if (step.element) {
+                // Simplified walkthrough: just alert for demo purposes as UI implementation details not fully defined
+                alert(step.text);
+                currentStep++;
+                showStep();
+            } else {
+                currentStep++;
+                showStep();
+            }
+        };
+        showStep();
+    }
     if (messagesEl && typeof ot !== 'undefined') {
         const messages = messagesEl.querySelectorAll('[data-msg]');
         messages.forEach(msg => {

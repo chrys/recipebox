@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.generic import TemplateView
 from . import views
 
 urlpatterns = [
@@ -16,4 +17,8 @@ urlpatterns = [
     ),
     path("new/from-text/", views.recipe_from_text, name="recipe_from_text"),
     path("new/from-link/", views.recipe_from_link, name="recipe_from_link"),
+    path("about/", TemplateView.as_view(template_name="pages/about.html"), name="about"),
+    path("privacy/", TemplateView.as_view(template_name="pages/privacy.html"), name="privacy"),
+    path("terms/", TemplateView.as_view(template_name="pages/terms.html"), name="terms"),
+    path("contact/", views.contact_view, name="contact"),
 ]
